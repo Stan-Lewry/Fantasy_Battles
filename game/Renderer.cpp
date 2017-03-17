@@ -23,7 +23,7 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 	//renderCharacters(renderableCharacters2, map);
 	renderStatusBars(renderableCharacters1);
 	renderStatusBars(renderableCharacters2);
-	//renderUI(renderableUIElements, currentCharacter);
+	renderUI(renderableUIElements, currentCharacter);
 	renderCursor(mouseX, mouseY);
 	renderAnimationObjects(animationObject);
 	//renderText("CUM", font, 600, 600, 255, 0, 0);
@@ -172,7 +172,7 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 	//char* text = "TEST TEXT";
 	//TTF_SizeText(font, text, &fpsCounterDest.w, &fpsCounterDest.h);
 	//renderText
-
+	/*
 	SDL_Rect sRect;
 	SDL_Rect dRect;
 	for (int i = 0; i < 7; i++){
@@ -180,7 +180,26 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 		dRect = { renderableUIElements[i].screenX, renderableUIElements[i].screenY, renderableUIElements[i].width, renderableUIElements[i].height };
 		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
 	}
+	*/
+	
+	int uiX = 10;
+	int uiY = screenH - 225;	
 
+	SDL_Rect sRect = {0 ,0, 300, 150};
+	SDL_Rect dRect = {uiX, uiY, 450, 225};
+
+	SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
+
+	if(currentCharacter != NULL){
+		sRect = { 2* spriteSize, currentCharacter->getSpriteID() * spriteSize, spriteSize, spriteSize};
+		dRect = {uiX - 10, uiY - 20, 225, 225};
+		SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
+
+		sRect = { 0, 150, 140, 11};
+		dRect = {uiX + 190, uiY + 100, 210, 17};
+		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
+	}
+	/*
 	if (currentCharacter != NULL){
 		sRect = { 2 * spriteSize, currentCharacter->getSpriteID() * spriteSize, spriteSize, spriteSize };
 		dRect = { 75, 70, 150, 150 };
@@ -198,6 +217,7 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 
 		renderText(std::to_string(currentCharacter->getAttkPoints()).c_str(), font, 86, 540 - 8, 0, 0, 0);
 	}
+	*/
 
 }
 
