@@ -5,7 +5,7 @@ bool SDLUtils::initSDL(){
 
 	TTF_Init();
 	IMG_Init(IMG_INIT_PNG);
-	window = SDL_CreateWindow("Fantasy Battles: Turbo Edition", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenW, screenH, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Fatnasty Battles: Turbow Edition", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenW, screenH, SDL_WINDOW_SHOWN);
 	if (window != NULL){
 		printf("Window Initialized\n");
 		rend = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
