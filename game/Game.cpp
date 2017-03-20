@@ -143,6 +143,14 @@ void Game::update(InputState inputState){
 						if (selectedFriendlyCharacter->getMovePoints() > 0){
 							if (!characterInThatPosition(clickedTile.worldX, clickedTile.worldY)){
 								printf("move to\n");
+								std::vector<Point> path = world->getPath(selectedFriendlyCharacter->getWorldX(), 
+																		selectedFriendlyCharacter->getWorldY(), 
+																		clickedTile.worldX, 
+																		clickedTile.worldY, 
+																		selectedFriendlyCharacter->getMoveRange());
+								for(int a = 0; a < path.size(); a++){
+									std::cout << path.at(a).x << ", " << path.at(a).y << std::endl;
+								}
 								selectedFriendlyCharacter->moveTo(clickedTile.worldX, clickedTile.worldY, clickedTile.worldZ);
 							}
 							else printf("that position is blocked\n");

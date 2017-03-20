@@ -15,12 +15,15 @@ public:
 	bool isTraversable(int x, int y);
 	void checkMovementRange(int moveDist, int originX, int originY);
 	void checkAttackRange(int attackDist, int originX, int originY);
+	std::vector<Point> getPath(int originX, int originY,
+				   int destX, int destY, int moveDist);
 	void selectTile(int worldX, int worldY);
-	mapTile getTile(int clickX, int clickY, int renderOffsetX, int renderOffsetY);
+	mapTile getTile(int clickX, int clickY,
+                        int renderOffsetX, int renderOffsetY);
 	mapTile getTileWorldCoords(int worldX, int worldY);
 	void clearAll();
 	void loadMap(char* path);
-
+	
 	void setIsoScreenCoords(int x, int y);
 
 private:

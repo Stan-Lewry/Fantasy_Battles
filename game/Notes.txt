@@ -68,3 +68,22 @@ TODO:
 
 	implement a* powered animate along path
 
+
+
+Animating along a path:
+
+Need some kind of "path" being a list of points to move to.
+
+points being a list of x,y,z values
+character has std::vector<Points> path
+
+world has a get path function that takes an origin xy and and destination xy.
+using pre-detrermined move ranges completes an a* traversal and returns a vector of Points
+
+In the update function:
+	if slected char's path != 0
+		if first point is up
+			move up
+			etc
+			move about one tiles width every half second
+		remove first element

@@ -37,7 +37,7 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 		//const char* fChar = fString.c_str();
 		//printf(fChar);
 		//renderText("CUM", font, 600, 600, 255, 0, 0);
-		printf("%iFPS\n", frames);
+		//printf("%iFPS\n", frames);
 		frames = 0;
 		timer = 0;
 	}

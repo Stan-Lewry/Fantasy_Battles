@@ -35,6 +35,17 @@ const int mapSize = mapW * mapH;
 //int tileSize = 32;
 //bool globalRunning = true;
 
+struct Point{
+	int x;
+	int y;
+	//int z;
+};
+
+struct Node{
+	int x;
+	int y;
+	int parentIndex;
+};
 
 struct mapTile{
 	int screenX;
