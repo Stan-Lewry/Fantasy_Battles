@@ -96,18 +96,18 @@ void Game::doCombat(Character* friendly, Character* target){
 	if (friendly->getProfession() == "wizard"){
 		renderer->addAnimationObject(
 			target->getScreenX() + renderer->getRenderOffsetX() + 48,
-		 	target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 16), 
+		 	target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 32), 
 		 	MAGIC_ATTACK, "");
 	}
 	else{
 		renderer->addAnimationObject(
 			target->getScreenX() + renderer->getRenderOffsetX() + 48,
-			target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 16),
+			target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 32),
 			SWORD_ATTACK, "");
 	}
 	renderer->addAnimationObject(
 		target->getScreenX() + renderer->getRenderOffsetX() + 48,
-	 	target->getScreenY() + renderer->getRenderOffsetY() - (target->getWorldZ() * 16),
+	 	target->getScreenY() + renderer->getRenderOffsetY() - (target->getWorldZ() * 32),
 		DMG_NO, std::to_string(dmg));
 }
 

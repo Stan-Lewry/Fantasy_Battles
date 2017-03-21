@@ -52,7 +52,7 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){
 			
-			int height = map[i][j].worldZ * 16;
+			int height = map[i][j].worldZ * 32;
 			
 			dRect.x = map[i][j].screenX + renderOffsetX - 64;
 			dRect.y = map[i][j].screenY + renderOffsetY - 64;
@@ -121,14 +121,14 @@ void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 	//std::cout << "render characters called" << std::endl;
 	for (int i = 0; i < teamSize; i++){
 		SDL_Rect sRect = { renderableCharacters[i]->getAnimationFrame() * spriteSize, renderableCharacters[i]->getSpriteID() * spriteSize, spriteSize, spriteSize };
-		SDL_Rect dRect = { renderableCharacters[i]->getScreenX() + renderOffsetX, renderableCharacters[i]->getScreenY() + renderOffsetY - (renderableCharacters[i]->getWorldZ() * 16), tileSize, tileSize };
+		SDL_Rect dRect = { renderableCharacters[i]->getScreenX() + renderOffsetX, renderableCharacters[i]->getScreenY() + renderOffsetY - (renderableCharacters[i]->getWorldZ() * 32), tileSize, tileSize };
 		//SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
 
 		sRect = { 364, 32, 27, 4 };
-		dRect.x = dRect.x + (tileSize / 2) - 14;
+		dRect.x = dRect.x + (tileSize / 2) - 28;
 		dRect.y += 76;
-		dRect.w = (renderableCharacters[i]->getCurrentHP() * 27) / renderableCharacters[i]->getMaxHP();
-		dRect.h = 4;
+		dRect.w = ((renderableCharacters[i]->getCurrentHP() * 27) / renderableCharacters[i]->getMaxHP() * 2);
+		dRect.h = 4 * 2;
 
 		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
 

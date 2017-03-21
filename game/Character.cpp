@@ -47,7 +47,7 @@ Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _sc
 	case FIGHTER:
 		maxHp = 50;
 		hp = maxHp;
-		movePoints = 2;
+		movePoints = 5;
 		maxMovePoints = 2;
 		attkPoints = 1;
 		maxAttkPoints = 1;
@@ -55,7 +55,7 @@ Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _sc
 		attkRange = 1;
 
 		armour = 6;
-		attk = 20;
+		attk = 1000000;
 		break;
 	default:
 		break;

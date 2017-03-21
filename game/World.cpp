@@ -328,11 +328,16 @@ void World::checkMovementRange(int moveDist, int originX, int originY){
 
 			int currentX = listA.at(j).worldX;
 			int currentY = listA.at(j).worldY;
+			int currentZ = listA.at(j).worldZ;
 
 			if (isTraversable(currentX, currentY + 1)){
-				mapTile southAdj = map[currentY + 1][currentX];
-				listB.push_back(southAdj);
-				map[southAdj.worldY][southAdj.worldX].moveRange = true;
+				//if(map[]) if adjacent cells z val is within one of the current z value
+				if(currentZ - map[currentY + 1][currentX].worldZ >= -1 && currentZ - map[currentY + 1][currentX].worldZ <= 1){
+					mapTile southAdj = map[currentY + 1][currentX];
+					listB.push_back(southAdj);
+					map[southAdj.worldY][southAdj.worldX].moveRange = true;
+				}
+
 			}
 
 			if (isTraversable(currentX + 1, currentY)){
@@ -342,9 +347,14 @@ void World::checkMovementRange(int moveDist, int originX, int originY){
 			}
 
 			if (isTraversable(currentX, currentY - 1)){
-				mapTile northAdj = map[currentY - 1][currentX];
-				listB.push_back(northAdj);
-				map[northAdj.worldY][northAdj.worldX].moveRange = true;
+				int heightDif = currentZ - map[currentY-1][currentX].worldZ;
+				//if(currentZ - map[currentY - 1][currentX].worldZ >= -1 && currentZ - map[current])
+				if(heightDif >= -1 && heightDif <= 1){
+					mapTile northAdj = map[currentY - 1][currentX];
+					listB.push_back(northAdj);
+					map[northAdj.worldY][northAdj.worldX].moveRange = true;
+				}
+
 			}
 
 			if (isTraversable(currentX - 1, currentY)){
@@ -400,24 +410,6 @@ void World::checkAttackRange(int attackDist, int originX, int originY){
 		listB.clear();
 	}
 }
-
-/*
-std::vector<Point> World::getPath(int originX, int originY, int dextX, int destY, int moveDist){
-	std::vector<Node> listA;
-	std::vector<Node> listB;
-	std::vector<Node> visited;
-
-	bool pathFound = false;
-	int depth = 0;
-	Node origin = {originX, originY, 0};
-
-	while(!pathFound){
-		for(int i = 0; i < frontier.size(); i++){
-
-		}
-	}
-}
-*/
 
 //Look into splitting this up into several smaller function
 
@@ -528,7 +520,7 @@ mapTile World::getTile(int clickX, int clickY, int renderOffsetX, int renderOffs
 			//map[i][j].selected = false;
 
 			int minCollisionX = map[i][j].screenX + (tileSize / 4);
-			int minCollisionY = map[i][j].screenY + ((tileSize / 8) * 3) - (map[i][j].worldZ * 16);
+			int minCollisionY = map[i][j].screenY + ((tileSize / 8) * 3) - (map[i][j].worldZ * 32);
 
 			int maxCollisionX = minCollisionX + (tileSize / 2);
 			int maxCollisionY = minCollisionY + (tileSize / 4) ;
