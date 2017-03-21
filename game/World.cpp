@@ -1,3 +1,5 @@
+
+
 #include "World.h"
 
 mapTile* World::getMap(){
@@ -20,7 +22,6 @@ void World::initBlankMap(){
 			grass.worldY = i;
 
 			map[i][j] = grass;
-			//setIsoScreenCoords(j, i);
 		}
 	}
 }
@@ -31,6 +32,8 @@ void World::setIsoScreenCoords(int x, int y){
 }
 
 
+
+//look into condensing this needs doing urgently
 void World::loadMap(char* path){
 	std::string line;
 	std::fstream levelFile(path);
@@ -415,6 +418,8 @@ std::vector<Point> World::getPath(int originX, int originY, int dextX, int destY
 	}
 }
 */
+
+//Look into splitting this up into several smaller function
 
 std::vector<Point> World::getPath(int originX, int originY, int destX, int destY, int moveDist){
 	std::vector<Node> frontier;

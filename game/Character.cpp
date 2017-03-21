@@ -1,3 +1,6 @@
+// NOTES: REMOVE ALL KNOWLEDGE OF THE GAME RULES -- MIGRATE TO GAME CLASS, 
+// CHARACTER SHOULD ONLY STORE VALUES NOT GAME LOGIC
+
 #include "Character.h"
 
 Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _screenY, int _spriteID, Profession _profession, char* _name) {

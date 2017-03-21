@@ -1,5 +1,9 @@
 #include "Game.h"
 
+
+// Game::Game()
+// Constructor for Game class. 
+// Deals with the majority of initialisation including initialising all SDL utilities.
 Game::Game(){
 	sdlUtils = new SDLUtils();
 	input = new Input();
@@ -17,24 +21,28 @@ Game::Game(){
 	testAnimation = new AnimationObject{ 0, 0, 32, 32, 0, 3, DMG_NO, true, 0.1, 0 };
 }
 
-
+// Game::initCharacters() 
+// Initilaisises the two "teams" as arrays of type Character
+// Active character list and innactive character lists are swapped at the end of each turn
 void Game::initCharacters(){
-	activeCharacterList[0] = new Character(0, 6, 0, 0 * tileSize, 6 * tileSize, 0, KNIGHT, "Blue Knight");
-	activeCharacterList[1] = new Character(0, 7, 0, 0 * tileSize, 7 * tileSize,  2, WIZARD, "Blue Wizard");
+	activeCharacterList[0] = new Character(0, 6, 0, 0 * tileSize, 6 * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[1] = new Character(0, 7, 0, 0 * tileSize, 7 * tileSize,  4, FIGHTER, "Blue Fighter");
 	activeCharacterList[2] = new Character(0, 8, 0, 0 * tileSize, 8 * tileSize, 4, FIGHTER, "Blue Fighter");
 
-	inactiveCharacterList[0] = new Character(14, 6, 0, 14 * tileSize, 6 * tileSize, 1, KNIGHT, "Red Knight");
+	inactiveCharacterList[0] = new Character(14, 6, 0, 14 * tileSize, 6 * tileSize, 3, WIZARD, "Red Wizard");
 	inactiveCharacterList[1] = new Character(14, 7, 0, 14 * tileSize, 7 * tileSize, 3, WIZARD, "Red Wizard");
-	inactiveCharacterList[2] = new Character(14, 8, 0, 14 * tileSize, 8 * tileSize, 5, FIGHTER, "Red Fighter");
+	inactiveCharacterList[2] = new Character(14, 8, 0, 14 * tileSize, 8 * tileSize, 3, WIZARD, "Red Wizard");
 }
 
-void Game::switchCharacterLists(){ //NEEDS FIXING
-	//Character* tempCharacterList[teamSize] = activeCharacterList;
-	//activeCharacterList = inactiveCharacterList;
-	//inactiveCharacterList = tempCharacterList;
+// Game::switchCharacterLists()
+// Simply calls std::swap on the two character lists effectivly switching player control
+void Game::switchCharacterLists(){
 	std::swap(activeCharacterList, inactiveCharacterList);
 }
 
+// Game::endTurn()
+// Calls the behaviour for the end of the turn. 
+// Resets the characters in both lists and calls switchCharacterLists()
 void Game::endTurn(){
 	for (int i = 0; i < teamSize; i++){
 		activeCharacterList[i]->reset();
@@ -46,6 +54,9 @@ void Game::endTurn(){
 	world->clearAll();
 }
 
+// Game::selectFriendlyCharacter(int mouseX, int mouseY)
+// Itterates through the active (friendly to the current player) character lists calling checking their clickedOn function
+// returns true if a character was selected false if not.
 bool Game::selectFriendlyCharacter(int mouseX, int mouseY){
 	for (int i = 0; i < teamSize; i++){
 		if (activeCharacterList[i]->clickedOn(mouseX, mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY()) && activeCharacterList[i]->isDead() == false){
@@ -56,44 +67,57 @@ bool Game::selectFriendlyCharacter(int mouseX, int mouseY){
 	return false;
 }
 
+// Game::selectTargetCharacter(int mouseX, int mouseY)
+// Same as selectFriendlyCharacter just for selecting enemy characters - used for finding the
+// target of doCombat()
 bool Game::selectTargetCharacter(int mouseX, int mouseY){
 	for (int i = 0; i < teamSize; i++){
 		if (inactiveCharacterList[i]->clickedOn(mouseX, mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY())){
 			selectedTargetCharacter = inactiveCharacterList[i];
-			printf("YOU CLICKED ON AN EMEMY\n");
 			return true;
 		}
 	}
 	return false;
 }
 
+// Game::doCombat(Character* friendly, Character* target)
+// Takes a friendly character and a target character
+// Makes and applies damage caluclations
+// Sends the appropriate animation objects to the renderer
+// THIS FUNCTION IS DOING TO MUCH - TURN INTO SMALLER FUNCTIONS
+// REDUCING THE CHARACTERS POINTS SHOULD BE HANDLED BY THIS FUNCITON - MOVE FUNCTIONALITY FROM CHARACTER CLASS TO GAME
+// CHARACTER SHOULD NOT HAVE KNOWLEDGE OF THE GAME RULES - SIMPLY STORE VALUES
 void Game::doCombat(Character* friendly, Character* target){
 	world->clearAll();
 
 	int dmg = friendly->attack();
 	target->doDamage(dmg);
 
-	
-
 	if (friendly->getProfession() == "wizard"){
-		renderer->addAnimationObject(target->getScreenX() + renderer->getRenderOffsetX() + 48,
-		 target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 16) , MAGIC_ATTACK, "");
+		renderer->addAnimationObject(
+			target->getScreenX() + renderer->getRenderOffsetX() + 48,
+		 	target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 16), 
+		 	MAGIC_ATTACK, "");
 	}
 	else{
-		renderer->addAnimationObject(target->getScreenX() + renderer->getRenderOffsetX() + 48,
-		 target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 16) , SWORD_ATTACK, "");
+		renderer->addAnimationObject(
+			target->getScreenX() + renderer->getRenderOffsetX() + 48,
+			target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 16),
+			SWORD_ATTACK, "");
 	}
-	renderer->addAnimationObject(target->getScreenX() + renderer->getRenderOffsetX() + 48,
-	 				target->getScreenY() + renderer->getRenderOffsetY() - (target->getWorldZ() * 16),
-					 DMG_NO, std::to_string(dmg));
-	
-
-	//friendly->setAttkPoints(-1);
+	renderer->addAnimationObject(
+		target->getScreenX() + renderer->getRenderOffsetX() + 48,
+	 	target->getScreenY() + renderer->getRenderOffsetY() - (target->getWorldZ() * 16),
+		DMG_NO, std::to_string(dmg));
 }
 
+
+// Game::getRanges(Character* c)
+// This function tells the world object to apply the ranges of the character
+// This function is questionable, look into it later
 void Game::getRanges(Character* c){
 
-	world->clearAll(); //??????
+	world->clearAll();
 	
 	if (c->getMovePoints() > 0){
 		world->checkMovementRange(c->getMoveRange(), c->getWorldX(), c->getWorldY());
@@ -103,6 +127,9 @@ void Game::getRanges(Character* c){
 	}
 }
 
+// Game::characterInThatPosition(int worldX, int worldY)
+// this function takes world coords and returns true or false if a character occupies that space
+// questionable
 bool Game::characterInThatPosition(int worldX, int worldY){
 	for (int i = 0; i < teamSize; i++){
 		if (activeCharacterList[i]->getWorldX() == worldX){
@@ -119,6 +146,10 @@ bool Game::characterInThatPosition(int worldX, int worldY){
 	return false;
 }
 
+// Game::update(InputState inputState)
+// NEEDS LOOKING AT URGENTLY - DOES TOO MUCH STUFF
+// currently this function deals with the majority of the game logic including selection behaviours
+// very verbose and untidy - needs looking at
 void Game::update(InputState inputState){
 	
 	if (inputState.quit){
@@ -175,37 +206,8 @@ void Game::update(InputState inputState){
 			}
 		}
 
-		/*
-		
-		if no character selected
-			get click
-			if click is on a friendly character
-				that character is currently selected
-				if attack & move points > 0
-					display there ranges
-
-		if a character is selected
-			get click
-			if that click is on a tile thats in move range
-				if move points > 0
-					if that tile is not the another characrers x/y
-						move character to that tile
-			if that click is on an enemy character
-				if attack points > 0
-					if that char is in attack range
-						attack that character --- perhaps show a menu?
-			if that click is on a friendly character
-				select that character
-		*/
-
 
 		if (inputState.space){
-			//endTurn();
-			//testAnimation->dead = false;
-			//testAnimation->animationFrame = 0;	
-			//testAnimation->screenX = 300;
-			//testAnimation->screenY = 300;
-			//renderer->addAnimationObject(380, 400, SWORD_ATTACK, "");
 			endTurn();
 		}
 
@@ -270,7 +272,8 @@ void Game::update(InputState inputState){
 	
 }
 
-
+// Game::changeState(GameState newState)
+// Deals with changing state and any behaviour specific to a state transition
 void Game::changeState(GameState newState){
 	if (newState == GAMEPLAY){
 		ui->initGameplayElements();
@@ -281,29 +284,12 @@ void Game::changeState(GameState newState){
 	}
 }
 
-
+// Game::gameLoop()
+// main game loop
 void Game::gameLoop(){
-	//world->loadMap("Levels/test.level");
-
-
-	//ui->initGameplayElements();
-
 
 
 	while (globalRunning){
-		/*
-		oldTime = currentTime;
-		currentTime = SDL_GetTicks();
-		ftime = (currentTime - oldTime) / 1000.0f;
-	
-		frames++;
-		timer += ftime;
-		if (timer > 1){
-			std::cout << frames << std::endl;
-			frames = 0;
-			timer = 0;
-		}
-		*/
 		
 		input->handleEvents();
 		update(input->getCurrentInputState()); 

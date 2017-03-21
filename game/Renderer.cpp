@@ -113,36 +113,6 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 					// SAME AS ABOVE
 				}
 			}
-
-			/*
-			for (int k = 0; k < teamSize; k++){
-				//SDL_Rect sRect = { charList1[i]->getAnimationFrame() * spriteSize, charList1[i]->getSpriteID() * spriteSize, spriteSize, spriteSize };
-				SDL_Rect dRect = { charList1[k]->getScreenX() + renderOffsetX, charList1[k]->getScreenY() - height + renderOffsetY, tileSize, tileSize };
-				//SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
-				SDL_Rect sRect = { 364, 32, 27, 4 };
-				dRect.x = dRect.x + (tileSize / 2) - 14;
-				dRect.y += 38;
-				dRect.w = (charList1[k]->getCurrentHP() * 27) / charList1[k]->getMaxHP();
-				dRect.h = 4;
-
-				SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
-
-				dRect = { charList2[k]->getScreenX() + renderOffsetX, charList2[k]->getScreenY() - height + renderOffsetY, tileSize, tileSize };
-				//SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
-				sRect = { 364, 32, 27, 4 };
-				dRect.x = dRect.x + (tileSize / 2) - 14;
-				dRect.y += 38;
-				dRect.w = (charList2[i]->getCurrentHP() * 27) / charList2[i]->getMaxHP();
-				dRect.h = 4;
-
-				SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
-
-
-			}
-			*/
-
 		}
 	}
 }
@@ -167,20 +137,6 @@ void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 }
 
 void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCharacter){
-
-	//SDL_Rect fpsCounterDest = { 0, 0, 0, 0 };
-	//char* text = "TEST TEXT";
-	//TTF_SizeText(font, text, &fpsCounterDest.w, &fpsCounterDest.h);
-	//renderText
-	/*
-	SDL_Rect sRect;
-	SDL_Rect dRect;
-	for (int i = 0; i < 7; i++){
-		sRect = { renderableUIElements[i].sourceX, renderableUIElements[i].sourceY, renderableUIElements[i].width, renderableUIElements[i].height };
-		dRect = { renderableUIElements[i].screenX, renderableUIElements[i].screenY, renderableUIElements[i].width, renderableUIElements[i].height };
-		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
-	}
-	*/
 	
 	int uiX = 10;
 	int uiY = screenH - 225;	
@@ -191,33 +147,40 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 	SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
 
 	if(currentCharacter != NULL){
+		//Render the large character sprite on the main ui box
 		sRect = { 2* spriteSize, currentCharacter->getSpriteID() * spriteSize, spriteSize, spriteSize};
 		dRect = {uiX - 10, uiY - 20, 225, 225};
 		SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
+		
+		//render the health bar  -- needs to scale based on the selected chars hp
+		int barWidth = (currentCharacter->getCurrentHP() * 210) / currentCharacter->getMaxHP();
 		sRect = { 0, 150, 140, 11};
-		dRect = {uiX + 190, uiY + 100, 210, 17};
+		dRect = {uiX + 190, uiY + 100, barWidth, 17};
 		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
+
+		//render the HP text string
+		const char* hpStr = std::to_string(currentCharacter->getCurrentHP()).append("/").append(std::to_string(currentCharacter->getMaxHP())).c_str();
+		renderText(hpStr, font, uiX + 180, uiY + 80, 255, 255, 255);
+
+		// render the attack string
+		const char* attkStr = std::to_string(currentCharacter->getAttk()).c_str();
+		renderText(attkStr, font, uiX + 225, uiY + 135, 255, 255, 255);
+
+		//render the armor string
+		const char* armourStr = std::to_string(currentCharacter->getArmour()).c_str();
+		renderText(armourStr, font, uiX + 225, uiY + 185, 255, 255, 255);
+
+		//render move points string
+		const char* mpStr = std::to_string(currentCharacter->getMovePoints()).c_str();
+		renderText(mpStr, font, uiX + 345, uiY + 135, 255, 255, 255);
+
+		//render attack points string
+		const char* apStr = std::to_string(currentCharacter->getAttkPoints()).c_str();
+		renderText(apStr, font, uiX + 345, uiY + 185, 255, 255, 255);
+
+		//render the characters name
+		renderText(currentCharacter->getName(),font,  uiX + 190, uiY + 30, 255, 255, 255);
 	}
-	/*
-	if (currentCharacter != NULL){
-		sRect = { 2 * spriteSize, currentCharacter->getSpriteID() * spriteSize, spriteSize, spriteSize };
-		dRect = { 75, 70, 150, 150 };
-		SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
-		renderText(currentCharacter->getProfession(), font, 86, 220 - 8, 0, 0, 0);
-
-		renderText(std::to_string(currentCharacter->getCurrentHP()).append("/").append(std::to_string(currentCharacter->getMaxHP())).c_str(), font, 86, 284 - 8, 0, 0, 0);
-
-		renderText(std::to_string(currentCharacter->getAttk()).c_str(), font, 86, 348 - 8, 0, 0, 0);
-
-		renderText(std::to_string(currentCharacter->getArmour()).c_str(), font, 86, 412 - 8, 0, 0, 0);
-
-		renderText(std::to_string(currentCharacter->getMovePoints()).c_str(), font, 86, 476 - 8, 0, 0, 0);
-
-		renderText(std::to_string(currentCharacter->getAttkPoints()).c_str(), font, 86, 540 - 8, 0, 0, 0);
-	}
-	*/
 
 }
 
@@ -284,7 +247,7 @@ void Renderer::renderAnimationObjects(AnimationObject* object){
 				SDL_Rect dRect = { animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width, animationStack.at(i).height };
 				SDL_RenderCopy(rend, swordAnimationSheet, &sRect, &dRect);
 
-				if (animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
+	if (animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
 					animationStack.at(i).animationFrame += 1;
 					animationStack.at(i).frameTimer = 0;
 				}
@@ -365,8 +328,8 @@ void Renderer::initTextures(){
 
 
 void Renderer::initFonts(){
-	font = TTF_OpenFont("Fonts/font.ttf", 30);
-	dmgFont = TTF_OpenFont("Fonts/font.ttf", 18);
+	font = TTF_OpenFont("Fonts/half_bold_pixel.ttf", 28);
+	dmgFont = TTF_OpenFont("Fonts/half_bold_pixel.ttf", 18);
 }
 
 int Renderer::getRenderOffsetX(){

@@ -80,6 +80,7 @@ private:
 	int maxMovePoints;
 	int attkPoints;
 	int maxAttkPoints;
+	
 	int moveRange;
 	//int maxMoveRange;
 	int attkRange;
