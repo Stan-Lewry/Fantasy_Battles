@@ -3,7 +3,7 @@
 #include <iostream>
 //#include "SDLUtils.h"
 
-enum Profession{KNIGHT, WIZARD, FIGHTER};
+enum Profession{KNIGHT, WIZARD, FIGHTER, SPEARMAN, ARCHER};
 
 class Character{
 public:
@@ -31,7 +31,7 @@ public:
 	char* getProfession();
 	int getAttk();
 	int getArmour();
-
+	Profession getProf();
 
 
 	int getAnimationFrame();

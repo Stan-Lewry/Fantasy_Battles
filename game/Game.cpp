@@ -28,10 +28,15 @@ void Game::initCharacters(){
 	activeCharacterList[0] = new Character(0, 6, 0, 0 * tileSize, 6 * tileSize, 4, FIGHTER, "Blue Fighter");
 	activeCharacterList[1] = new Character(0, 7, 0, 0 * tileSize, 7 * tileSize,  4, FIGHTER, "Blue Fighter");
 	activeCharacterList[2] = new Character(0, 8, 0, 0 * tileSize, 8 * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[3] = new Character(0, 9, 0, 0 * tileSize, 9 * tileSize, 6, SPEARMAN, "Blue Spearman");
+	activeCharacterList[4] = new Character(0, 10,0, 0 * tileSize,10 * tileSize, 8, ARCHER, "Blue Archer" );
+
 
 	inactiveCharacterList[0] = new Character(14, 6, 0, 14 * tileSize, 6 * tileSize, 3, WIZARD, "Red Wizard");
 	inactiveCharacterList[1] = new Character(14, 7, 0, 14 * tileSize, 7 * tileSize, 3, WIZARD, "Red Wizard");
 	inactiveCharacterList[2] = new Character(14, 8, 0, 14 * tileSize, 8 * tileSize, 3, WIZARD, "Red Wizard");
+	inactiveCharacterList[3] = new Character(14, 9, 0, 14 * tileSize, 9 * tileSize, 3, WIZARD, "Red Wizard");
+	inactiveCharacterList[4] = new Character(14,10, 0, 14 * tileSize,10 * tileSize, 3, WIZARD, "Red Wizard");
 }
 
 // Game::switchCharacterLists()
@@ -93,17 +98,31 @@ void Game::doCombat(Character* friendly, Character* target){
 	int dmg = friendly->attack();
 	target->doDamage(dmg);
 
-	if (friendly->getProfession() == "wizard"){
+	if (friendly->getProf() == WIZARD){
 		renderer->addAnimationObject(
-			target->getScreenX() + renderer->getRenderOffsetX() + 48,
-		 	target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 32), 
+			target->getScreenX() + renderer->getRenderOffsetX() + 24,
+		 	target->getScreenY() + renderer->getRenderOffsetY() + 24 - (target->getWorldZ() * 32), 
 		 	MAGIC_ATTACK, "");
 	}
-	else{
+	else if( friendly->getProf() == FIGHTER || friendly->getProf() == KNIGHT){
 		renderer->addAnimationObject(
-			target->getScreenX() + renderer->getRenderOffsetX() + 48,
-			target->getScreenY() + renderer->getRenderOffsetY() + 48 - (target->getWorldZ() * 32),
+			target->getScreenX() + renderer->getRenderOffsetX() + 24,
+			target->getScreenY() + renderer->getRenderOffsetY() + 24 - (target->getWorldZ() * 32),
 			SWORD_ATTACK, "");
+	}
+	else if(friendly->getProf() == SPEARMAN){
+		std::cout << "Spear attack sent\n";
+		renderer->addAnimationObject(
+			target->getScreenX() + renderer->getRenderOffsetX() + 24,
+			target->getScreenY() + renderer->getRenderOffsetY() + 24 - (target->getWorldZ() * 32),
+			SPEAR_ATTACK, "");
+	}
+	else if(friendly->getProf() == ARCHER){
+		std::cout << "arrow attack sent\n";
+		renderer->addAnimationObject(
+			target->getScreenX() + renderer->getRenderOffsetX() + 24,
+			target->getScreenY() + renderer->getRenderOffsetY() + 24 - (target->getWorldZ() * 32),
+			ARROW_ATTACK, "");
 	}
 	renderer->addAnimationObject(
 		target->getScreenX() + renderer->getRenderOffsetX() + 48,

@@ -244,10 +244,10 @@ void Renderer::renderAnimationObjects(AnimationObject* object){
 				animationStack.at(i).frameTimer += ftime;
 
 				SDL_Rect sRect = { animationStack.at(i).animationFrame * animationStack.at(i).width, 0, animationStack.at(i).width, animationStack.at(i).height };
-				SDL_Rect dRect = { animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width, animationStack.at(i).height };
-				SDL_RenderCopy(rend, swordAnimationSheet, &sRect, &dRect);
+				SDL_Rect dRect = { animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width * 2, animationStack.at(i).height * 2};
+				SDL_RenderCopy(rend, attackAnimSheet, &sRect, &dRect);
 
-	if (animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
+				if (animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
 					animationStack.at(i).animationFrame += 1;
 					animationStack.at(i).frameTimer = 0;
 				}
@@ -257,13 +257,14 @@ void Renderer::renderAnimationObjects(AnimationObject* object){
 					animationStack.erase(animationStack.begin() + i);
 				}
 			}
+
 			else if (animationStack.at(i).animType == MAGIC_ATTACK){
 			
 				animationStack.at(i).frameTimer += ftime;
 
-				SDL_Rect sRect = { animationStack.at(i).animationFrame * animationStack.at(i).width, 0, animationStack.at(i).width, animationStack.at(i).height };
-				SDL_Rect dRect = { animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width, animationStack.at(i).height };
-				SDL_RenderCopy(rend, fireAnimationSheet, &sRect, &dRect);
+				SDL_Rect sRect = { animationStack.at(i).animationFrame * animationStack.at(i).width, 32, animationStack.at(i).width, animationStack.at(i).height };
+				SDL_Rect dRect = { animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width * 2, animationStack.at(i).height * 2 };
+				SDL_RenderCopy(rend, attackAnimSheet, &sRect, &dRect);
 
 				if (animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
 					animationStack.at(i).animationFrame += 1;
@@ -272,6 +273,42 @@ void Renderer::renderAnimationObjects(AnimationObject* object){
 
 				if (animationStack.at(i).animationFrame > animationStack.at(i).endFrame){
 		
+					animationStack.erase(animationStack.begin() + i);
+				}
+			}
+
+			else if (animationStack.at(i).animType == SPEAR_ATTACK){
+				std::cout << "animating spear attack\n";
+				animationStack.at(i).frameTimer += ftime;
+
+				SDL_Rect sRect = {animationStack.at(i).animationFrame * animationStack.at(i).width, 64, animationStack.at(i).width, animationStack.at(i).height};
+				SDL_Rect dRect = {animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width * 2, animationStack.at(i).height * 2};
+				SDL_RenderCopy(rend, attackAnimSheet, &sRect, &dRect);
+
+				if(animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
+					animationStack.at(i).animationFrame += 1;
+					animationStack.at(i).frameTimer = 0;
+				}
+
+				if(animationStack.at(i).animationFrame > animationStack.at(i).endFrame){
+					animationStack.erase(animationStack.begin() + i);
+				}
+			}
+
+			else if (animationStack.at(i).animType == ARROW_ATTACK){
+				std::cout << "animation arrow attack \n";
+				animationStack.at(i).frameTimer += ftime;
+
+				SDL_Rect sRect = {animationStack.at(i).animationFrame * animationStack.at(i).width, 96, animationStack.at(i).width, animationStack.at(i).height};
+				SDL_Rect dRect = {animationStack.at(i).screenX, animationStack.at(i).screenY, animationStack.at(i).width * 2, animationStack.at(i).height * 2};
+				SDL_RenderCopy(rend, attackAnimSheet, &sRect, &dRect);
+
+				if(animationStack.at(i).frameTimer > animationStack.at(i).frameSpeed){
+					animationStack.at(i).animationFrame += 1;
+					animationStack.at(i).frameTimer = 0;
+				}
+
+				if(animationStack.at(i).animationFrame > animationStack.at(i).endFrame){
 					animationStack.erase(animationStack.begin() + i);
 				}
 			}
@@ -318,12 +355,13 @@ SDL_Texture* Renderer::loadPNG(char path[]){
 
 void Renderer::initTextures(){
 	worldSpriteSheet = loadPNG("Assets/iso_tiles_large.png");
-	characterSpriteSheet = loadPNG("Assets/characters_large.png");
+	characterSpriteSheet = loadPNG("Assets/characters05.png");
 	uiSpriteSheet = loadPNG("Assets/ui.png");
 	titleScreen = loadPNG("Assets/title_screen.png");
 	mainMenuButtons = loadPNG("Assets/main_menu_buttons.png");
 	swordAnimationSheet = loadPNG("Assets/sword_anim.png");
 	fireAnimationSheet = loadPNG("Assets/fire_anim.png");
+	attackAnimSheet = loadPNG("Assets/animation_sheet.png");
 }
 
 
@@ -366,6 +404,16 @@ void Renderer::addAnimationObject(int screenX, int screenY, AnimationType animTy
 	}
 
 	else if (animType == MAGIC_ATTACK){
+		AnimationObject newAnimObj = { screenX, screenY, 32, 32, 0, 8, animType, false, 0.05, 0, text };
+		animationStack.push_back(newAnimObj);
+	}
+
+	else if(animType == SPEAR_ATTACK){
+		AnimationObject newAnimObj = { screenX, screenY, 32, 32, 0, 8, animType, false, 0.05, 0, text };
+		animationStack.push_back(newAnimObj);
+	}
+
+	else if(animType == ARROW_ATTACK){
 		AnimationObject newAnimObj = { screenX, screenY, 32, 32, 0, 8, animType, false, 0.05, 0, text };
 		animationStack.push_back(newAnimObj);
 	}

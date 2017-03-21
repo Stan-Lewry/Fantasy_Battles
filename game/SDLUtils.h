@@ -19,7 +19,7 @@
 #define screenW 1280
 #define screenH 720
 
-#define teamSize 3
+#define teamSize 5
 
 
 
@@ -67,7 +67,7 @@ struct mapTile{
 
 enum UIAction{NO_ACTION, A, B, C , CHANGESTATE_GAMEPLAY, QUIT};
 enum GameState{MAINMENU, LEVELSELECT, GAMEPLAY};
-enum AnimationType{DMG_NO, SWORD_ATTACK, MAGIC_ATTACK};
+enum AnimationType{DMG_NO, SWORD_ATTACK, MAGIC_ATTACK, SPEAR_ATTACK, ARROW_ATTACK};
 
 struct AnimationObject{
 	int screenX, screenY, width, height, animationFrame, endFrame;

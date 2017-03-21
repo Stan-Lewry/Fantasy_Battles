@@ -51,7 +51,7 @@ private:
 	SDL_Texture* mainMenuButtons;
 	SDL_Texture* swordAnimationSheet;
 	SDL_Texture* fireAnimationSheet;
-
+	SDL_Texture* attackAnimSheet = NULL;
 
 	TTF_Font* font = NULL;
 	TTF_Font* dmgFont = NULL;

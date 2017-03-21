@@ -64,7 +64,7 @@ bool initSDL(){
 	TTF_Init();
 	IMG_Init(IMG_INIT_PNG);
 	font = TTF_OpenFont("Fonts/font.ttf", 22);
-	window = SDL_CreateWindow("Level Editor", 100, 100, screenW, screenH, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Level Editor", 0, 0, screenW, screenH, SDL_WINDOW_SHOWN);
 	if (window != NULL){
 		printf("Window Initialized\n");
 		rend = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
@@ -481,7 +481,7 @@ void cycleTileZValue(int inputX, int inputY){
 
 void exportMap(){
 	std::ofstream levelFile;
-	levelFile.open("Mountain.level");
+	levelFile.open("DeathMountain.level");
 
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){

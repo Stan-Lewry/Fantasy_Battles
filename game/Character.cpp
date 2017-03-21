@@ -57,6 +57,31 @@ Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _sc
 		armour = 6;
 		attk = 1000000;
 		break;
+	case SPEARMAN:
+		maxHp = 50;
+		hp = maxHp;
+		movePoints = 5;
+		maxMovePoints = 2;
+		attkPoints = 1;
+		maxAttkPoints = 1;
+		moveRange = 5;
+		attkRange = 2;
+
+		armour = 6;
+		attk = 1000000;
+		break;
+	case ARCHER:
+		maxHp = 70;
+		hp = maxHp;
+		movePoints = 1;
+		maxMovePoints = 1;
+		attkPoints = 2;
+		maxAttkPoints = 2;
+		moveRange = 3;
+		attkRange = 5;
+
+		armour = 8;
+		attk = 15;
 	default:
 		break;
 	}
@@ -151,6 +176,10 @@ char* Character::getProfession(){
 	case FIGHTER: return "fighter"; break;
 	default: break;
 	}
+}
+
+Profession Character::getProf(){
+	return profession;
 }
 
 
