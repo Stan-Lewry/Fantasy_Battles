@@ -15,6 +15,8 @@ Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _sc
 	dead = false;
 	animationFrame = 2;
 
+
+
 	profession = _profession;
 	
 	switch (profession){
@@ -47,7 +49,7 @@ Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _sc
 	case FIGHTER:
 		maxHp = 50;
 		hp = maxHp;
-		movePoints = 5;
+		movePoints = 2;
 		maxMovePoints = 2;
 		attkPoints = 1;
 		maxAttkPoints = 1;
@@ -55,20 +57,20 @@ Character::Character(int _worldX, int _worldY, int _worldZ,int _screenX, int _sc
 		attkRange = 1;
 
 		armour = 6;
-		attk = 1000000;
+		attk = 20;
 		break;
 	case SPEARMAN:
 		maxHp = 50;
 		hp = maxHp;
-		movePoints = 5;
-		maxMovePoints = 2;
+		movePoints = 1;
+		maxMovePoints = 1;
 		attkPoints = 1;
 		maxAttkPoints = 1;
 		moveRange = 5;
 		attkRange = 2;
 
 		armour = 6;
-		attk = 1000000;
+		attk = 25;
 		break;
 	case ARCHER:
 		maxHp = 70;
@@ -142,7 +144,7 @@ int Character::getMovePoints(){
 }
 
 void Character::setMovePoints(int p){
-	movePoints = p;
+	movePoints += p;
 }
 
 int Character::getAttkPoints(){
@@ -150,7 +152,7 @@ int Character::getAttkPoints(){
 }
 
 void Character::setAttkPoints(int p){
-	attkPoints = p;
+	attkPoints += p;
 }
 
 int Character::getAnimationFrame(){
@@ -258,4 +260,88 @@ void Character::doDamage(int dmg){
 	else{
 		hp -= dmg;
 	}
+}
+
+
+void Character::assignPath(std::vector<Point> newPath){
+	path = newPath;
+}
+
+void Character::animateAlongPath(){
+	if(path.size() > 0){
+		isMoving = true;
+
+		if(path.at(0).x > worldX){											// check the direction of the next cell
+			std::cout << "moving right\n";
+			//moveTo(path.at(0).x, path.at(0).y, 0);
+			//path.erase(path.begin() + 0);									// erase the first element from the path
+		}
+		else if(path.at(0).x < worldX){
+			std::cout << "moving left\n";
+			//moveTo(path.at(0).x, path.at(0).y, 0);
+			//path.erase(path.begin() + 0);
+		}
+		else if(path.at(0).y > worldY){
+			std::cout << "moving down\n";
+			//moveTo(path.at(0).x, path.at(0).y, 0);
+			//path.erase(path.begin() + 0);
+		}
+		else if(path.at(0).y < worldY){
+			std::cout << "moving left\n";
+			//moveTo(path.at(0).x, path.at(0).y, 0);
+			//path.erase(path.begin() + 0);
+		}
+
+		bool arrived = animateToTile(path.at(0).x, path.at(0).y);
+		if(arrived){
+			path.erase(path.begin() + 0);
+		}
+
+	}else{
+		isMoving = false;
+	}
+
+}
+
+bool Character::animateToTile(int tileWorldX, int tileWorldY){
+	int screenDestX = (tileWorldX - tileWorldY) * 128 / 2;
+	int screenDestY = (tileWorldX + tileWorldY) * 128 / 4;
+
+	if(screenDestY == screenY && screenDestX == screenX){
+
+		std::cout << "RETURNING TRUE\n";
+		worldX = tileWorldX;
+		worldY = tileWorldY;
+		//worldZ = ???;
+		return true;
+	}
+
+	else if(tileWorldX > worldX){
+		//std::cout << "moving right\n";
+		screenX += 2;
+		screenY += 1;
+		return false;
+		//moving to the right
+	}
+	else if(tileWorldX < worldX){
+		//std::cout << "moving left\n";
+		screenX -= 2;
+		screenY -= 1;
+		return false;
+		//moving to the left
+	}else if(tileWorldY > worldY){
+		//std::cout << "moving down\n";
+		screenY += 1;
+		screenX -= 2;
+		return false;
+		//moving down
+	}
+	else if(tileWorldY < worldY){
+		//std::cout << "moving up\n";
+		screenX += 2;
+		screenY -= 1;
+		return false;
+		//moving up
+	}
+
 }

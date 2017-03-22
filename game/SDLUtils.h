@@ -68,7 +68,7 @@ struct mapTile{
 enum UIAction{NO_ACTION, A, B, C , CHANGESTATE_GAMEPLAY, QUIT};
 enum GameState{MAINMENU, LEVELSELECT, GAMEPLAY};
 enum AnimationType{DMG_NO, SWORD_ATTACK, MAGIC_ATTACK, SPEAR_ATTACK, ARROW_ATTACK};
-
+//enum Direction{N, S, E, W};
 struct AnimationObject{
 	int screenX, screenY, width, height, animationFrame, endFrame;
 	AnimationType animType;

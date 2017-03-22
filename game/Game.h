@@ -9,6 +9,8 @@
 #include "Character.h"
 #include "UI.h"
 
+
+
 class Game{
 public:
 	Game();
@@ -22,8 +24,12 @@ public:
 
 	void attack(int mouseX, int mouseY);
 
+	void processInputs(InputState inputState);
+	void processInputsGameplay(InputState inputState);
+	void processInputsMainMenu(InputState inputState);
+
 	void doCombat(Character* friendly, Character* target);
-	void update(InputState inputState);
+	void update();
 	void changeState(GameState newState);
 	void switchCharacterLists();
 	void getRanges(Character* c);
@@ -53,7 +59,7 @@ private:
 	AnimationObject* testAnimation;
 
 	bool globalRunning;
-	
+	bool characterAnimating = false;
 
 	GameState currentState = MAINMENU;
 	
@@ -63,7 +69,7 @@ private:
 	//SDL_Event evnt;
 	int tileSize = 64;
 
-	int scrollSpeed = 10;
+	int scrollSpeed = 5;
 	
 };
 

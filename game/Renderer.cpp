@@ -19,8 +19,8 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 	SDL_RenderClear(rend);
 	renderMapBackground();
 	renderWorld(map, currentCharacter, renderableCharacters1, renderableCharacters2);
-	//renderCharacters(renderableCharacters1, map);
-	//renderCharacters(renderableCharacters2, map);
+	renderCharacters(renderableCharacters1, map);
+	renderCharacters(renderableCharacters2, map);
 	renderStatusBars(renderableCharacters1);
 	renderStatusBars(renderableCharacters2);
 	renderUI(renderableUIElements, currentCharacter);
@@ -37,7 +37,7 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 		//const char* fChar = fString.c_str();
 		//printf(fChar);
 		//renderText("CUM", font, 600, 600, 255, 0, 0);
-		//printf("%iFPS\n", frames);
+		printf("%iFPS\n", frames);
 		frames = 0;
 		timer = 0;
 	}
@@ -97,6 +97,7 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 				SDL_RenderCopy(rend, worldSpriteSheet, &sRect, &dRect);
 			}
 
+			/*
 			for (int k = 0; k < teamSize; k++){
 				if (charList1[k]->getWorldX() == j && charList1[k]->getWorldY() == i){
 					SDL_Rect sRect = { charList1[k]->getAnimationFrame() * spriteSize, charList1[k]->getSpriteID() * spriteSize, spriteSize, spriteSize };
@@ -113,7 +114,16 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 					// SAME AS ABOVE
 				}
 			}
+			*/
 		}
+	}
+}
+
+void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW][mapH]){
+	for(int i = 0 ; i < teamSize; i++){
+		SDL_Rect sRect = {charList[i]->getAnimationFrame() * spriteSize, charList[i]->getSpriteID() * spriteSize, spriteSize, spriteSize};
+		SDL_Rect dRect = {charList[i]->getScreenX() + renderOffsetX, charList[i]->getScreenY() - (charList[i]->getWorldZ() * 32) + renderOffsetY, tileSize, tileSize};
+		SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
 	}
 }
 
@@ -127,8 +137,8 @@ void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 		sRect = { 364, 32, 27, 4 };
 		dRect.x = dRect.x + (tileSize / 2) - 28;
 		dRect.y += 76;
-		dRect.w = ((renderableCharacters[i]->getCurrentHP() * 27) / renderableCharacters[i]->getMaxHP() * 2);
-		dRect.h = 4 * 2;
+		dRect.w = ((renderableCharacters[i]->getCurrentHP() * 27) / renderableCharacters[i]->getMaxHP()  );
+		dRect.h = 4;
 
 		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
 

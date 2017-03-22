@@ -1,7 +1,8 @@
 #ifndef CHARACTER_HEADER
 #define CHARACTER_HEADER
 #include <iostream>
-//#include "SDLUtils.h"
+#include <vector>
+#include "SDLUtils.h"
 
 enum Profession{KNIGHT, WIZARD, FIGHTER, SPEARMAN, ARCHER};
 
@@ -33,6 +34,9 @@ public:
 	int getArmour();
 	Profession getProf();
 
+	void assignPath(std::vector<Point> newPath);
+	void animateAlongPath();
+	bool animateToTile(int tileWorldX, int tileWorldY);
 
 	int getAnimationFrame();
 	void setAnimationFrame(int frame);
@@ -53,6 +57,8 @@ public:
 
 	void setDead(bool d);
 	bool isDead();
+
+	bool isMoving = false;
 private:
 	int worldX;
 	int worldY;
@@ -60,7 +66,8 @@ private:
 	int screenX;
 	int screenY;
 	
-	
+	std::vector<Point> path;
+
 	char* name;
 	int animationFrame;
 	bool dead;

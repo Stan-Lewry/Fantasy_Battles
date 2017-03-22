@@ -508,6 +508,9 @@ std::vector<Point> World::getPath(int originX, int originY, int destX, int destY
 		path.push_back(p);
 		currentNode = visited.at(currentNode.parentIndex);
 	}
+
+	std::reverse(path.begin(), path.end());
+
 	return path;
 }
 

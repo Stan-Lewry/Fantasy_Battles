@@ -66,6 +66,7 @@ bool Game::selectFriendlyCharacter(int mouseX, int mouseY){
 	for (int i = 0; i < teamSize; i++){
 		if (activeCharacterList[i]->clickedOn(mouseX, mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY()) && activeCharacterList[i]->isDead() == false){
 			selectedFriendlyCharacter = activeCharacterList[i];
+			getRanges(selectedFriendlyCharacter);
 			return true;
 		}
 	}
@@ -165,10 +166,127 @@ bool Game::characterInThatPosition(int worldX, int worldY){
 	return false;
 }
 
+void Game::processInputs(InputState inputState){
+	switch(currentState){
+		case MAINMENU: processInputsMainMenu(inputState); break;
+		case GAMEPLAY: processInputsGameplay(inputState); break;
+		default: break;
+	}
+}
+
+
+
+//BUG HERE
+//if you have a character selected then you click on a tile AND a friendly
+// it will selelct the friendly then if you click back on the original character it will instantly move them and display their ranges at
+// their old position
+void Game::processInputsGameplay(InputState inputState){
+	/*
+	 if there is no selected character
+	 	select a character?
+	 if there is a character selected
+	 	if the click is on a new char
+	 		select that char
+	 		exit loop?
+	 	if the click is on a moveable tile?
+	 		get the path to that tile
+	 		assign that path to the character
+	 	if the click is on an attackable enemy
+	 		do the combat
+	*/
+
+	if(inputState.quit) globalRunning = false;
+
+	if(selectedFriendlyCharacter == NULL){
+		if(inputState.mouseButtonDown){
+			if(selectFriendlyCharacter(inputState.mouseX, inputState.mouseY)){
+				//what do we do here?
+			}
+		}
+	}
+
+	if(selectedFriendlyCharacter != NULL){
+		if(inputState.mouseButtonDown){
+			if(selectedFriendlyCharacter->getMovePoints() > 0){
+				mapTile clickedTile = world->getTile(inputState.mouseX, inputState.mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY());
+				if(clickedTile.exists && clickedTile.moveRange){
+					if(!characterInThatPosition(clickedTile.worldX, clickedTile.worldY)){
+						// get the path to that tile and assign it to our character
+						selectedFriendlyCharacter->assignPath(
+							world->getPath(
+								selectedFriendlyCharacter->getWorldX(), selectedFriendlyCharacter->getWorldY(),
+								clickedTile.worldX, clickedTile.worldY, selectedFriendlyCharacter->getMoveRange()));
+						selectedFriendlyCharacter->setMovePoints(-1);
+						world->clearAll();
+					}
+				}
+			}
+			else if(selectTargetCharacter(inputState.mouseX, inputState.mouseY)){
+				if(selectedFriendlyCharacter->getAttkPoints() > 0){
+					if(world->getTileWorldCoords(selectedTargetCharacter->getWorldX(), selectedTargetCharacter->getWorldY()).attackRange){
+						// do the combat
+						doCombat(selectedFriendlyCharacter, selectedTargetCharacter);
+					}
+				}
+			}
+			if(selectFriendlyCharacter(inputState.mouseX, inputState.mouseY)){
+				//selecting a new friendly character
+			}
+		}
+	}
+
+	if (inputState.space){
+		endTurn();
+	}
+
+	if(inputState.mouseX < 20){
+		if(renderer->getRenderOffsetX() < 1280){
+			renderer->addOffsetX(scrollSpeed);
+		}
+	}
+	if(inputState.mouseX > screenW - 20){
+		if(renderer->getRenderOffsetX() > 0){
+			renderer->addOffsetX(-scrollSpeed);
+		}
+	}
+	if(inputState.mouseY < 20){
+		if(renderer->getRenderOffsetY() < 400){
+			renderer->addOffsetY(scrollSpeed);
+		}
+	}
+	if(inputState.mouseY > screenH - 20){
+		if(renderer->getRenderOffsetY() > -700){
+			renderer->addOffsetY(-scrollSpeed);
+		}
+	}  
+}
+
+void Game::processInputsMainMenu(InputState inputState){
+	ui->hover(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
+
+		if (input->getCurrentInputState().mouseButtonDown){
+			if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == CHANGESTATE_GAMEPLAY){
+				changeState(GAMEPLAY);
+			}
+			else if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == QUIT){
+				globalRunning = false;
+			}
+		}
+
+}
+
+
+void Game::update(){
+	if(selectedFriendlyCharacter != NULL){
+		selectedFriendlyCharacter->animateAlongPath();
+	}
+}
+/*
 // Game::update(InputState inputState)
 // NEEDS LOOKING AT URGENTLY - DOES TOO MUCH STUFF
 // currently this function deals with the majority of the game logic including selection behaviours
 // very verbose and untidy - needs looking at
+// split differen update behaviours into different functions.
 void Game::update(InputState inputState){
 	
 	if (inputState.quit){
@@ -198,10 +316,13 @@ void Game::update(InputState inputState){
 																		clickedTile.worldX, 
 																		clickedTile.worldY, 
 																		selectedFriendlyCharacter->getMoveRange());
+								selectedFriendlyCharacter->assignPath(path);
+								world->clearAll();
+								selectedFriendlyCharacter->setMovePoints(-1);
 								for(int a = 0; a < path.size(); a++){
 									std::cout << path.at(a).x << ", " << path.at(a).y << std::endl;
 								}
-								selectedFriendlyCharacter->moveTo(clickedTile.worldX, clickedTile.worldY, clickedTile.worldZ);
+								//selectedFriendlyCharacter->moveTo(clickedTile.worldX, clickedTile.worldY, clickedTile.worldZ);
 							}
 							else printf("that position is blocked\n");
 						}
@@ -272,6 +393,10 @@ void Game::update(InputState inputState){
 				inactiveCharacterList[i]->setIdle(true);
 			}
 		}
+		if(selectedFriendlyCharacter != NULL){
+			selectedFriendlyCharacter->animateAlongPath(renderer->getRenderOffsetX(), renderer->getRenderOffsetY());
+		}
+
 
 	}
 	else if (currentState == MAINMENU){
@@ -290,7 +415,7 @@ void Game::update(InputState inputState){
 	}
 	
 }
-
+*/
 // Game::changeState(GameState newState)
 // Deals with changing state and any behaviour specific to a state transition
 void Game::changeState(GameState newState){
@@ -311,7 +436,8 @@ void Game::gameLoop(){
 	while (globalRunning){
 		
 		input->handleEvents();
-		update(input->getCurrentInputState()); 
+		processInputs(input->getCurrentInputState());
+		update(); 
 		//renderMap();
 		if (currentState == GAMEPLAY){
 			renderer->renderGame(world->map, activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
