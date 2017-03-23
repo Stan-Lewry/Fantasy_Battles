@@ -21,6 +21,7 @@ public:
 	void renderUI(UIElement renderableUIElements[1], Character* currentCharacter);
 	void renderWorld(mapTile map[mapH][mapW], Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]);
 	void renderMapBackground();
+	void renderMapForeground();
 	void renderCursor(int mouseX, int mouseY);
 	void renderText(const char* text, TTF_Font* font, int x, int y, int r, int g, int b);
 	void renderAnimationObjects(AnimationObject* object);
@@ -52,6 +53,7 @@ private:
 	SDL_Texture* swordAnimationSheet;
 	SDL_Texture* fireAnimationSheet;
 	SDL_Texture* attackAnimSheet = NULL;
+	SDL_Texture* foreground = NULL;
 
 	TTF_Font* font = NULL;
 	TTF_Font* dmgFont = NULL;

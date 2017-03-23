@@ -3,8 +3,7 @@ todo:
 	- fix mouse collision on characters	DONE
 	- make selection more obvious DONE
 	- tidy up get path function	??
-	- foreground layer
-	- move render offset to Vect2
+	- foreground layer ??
 	- fix rendering of status bars	DONE
 	- finish commenting all code 
 	- draw new tiles

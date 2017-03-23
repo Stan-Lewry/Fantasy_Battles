@@ -26,6 +26,7 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 	renderUI(renderableUIElements, currentCharacter);
 	renderCursor(mouseX, mouseY);
 	renderAnimationObjects(animationObject);
+	renderMapForeground();
 	//renderText("CUM", font, 600, 600, 255, 0, 0);
 
 	if (timer > 1){
@@ -201,6 +202,11 @@ void Renderer::renderMapBackground(){
 	SDL_RenderFillRect(rend, &dRect);
 }
 
+void Renderer::renderMapForeground(){
+	SDL_Rect sRect = {0, 0, 320, 180};
+	SDL_Rect dRect = {0, 0, screenW, screenH};
+	SDL_RenderCopy(rend, foreground, &sRect, &dRect);
+}
 
 void Renderer::renderCursor(int mouseX, int mouseY){
 	SDL_Rect sRect = { 300, 0, 64, 64 };
@@ -372,6 +378,7 @@ void Renderer::initTextures(){
 	swordAnimationSheet = loadPNG("Assets/sword_anim.png");
 	fireAnimationSheet = loadPNG("Assets/fire_anim.png");
 	attackAnimSheet = loadPNG("Assets/animation_sheet.png");
+	foreground = loadPNG("Assets/foreground.png");
 }
 
 
