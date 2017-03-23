@@ -1,7 +1,12 @@
 todo:
-	- animation along paths
-	- tidy up get path function
+	- animation along path	DONE
+	- fix mouse collision on characters	DONE
+	- make selection more obvious DONE
+	- tidy up get path function	??
 	- foreground layer
-	- drop down for move here, cencel, attack, cancel, etc
-	- fix rendering of status bars
+	- move render offset to Vect2
+	- fix rendering of status bars	DONE
 	- finish commenting all code 
+	- draw new tiles
+	- fix drawing tiles beneath tall tiles
+	- write new editor

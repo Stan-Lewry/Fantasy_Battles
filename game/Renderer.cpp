@@ -63,13 +63,13 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 
 			if (currentCharacter != NULL){
 				if (currentCharacter->getAttkRange() > currentCharacter->getMoveRange()){
-					if (map[i][j].moveRange){
+					if (map[i][j].moveRange && !map[i][j].occupiedF && !map[i][j].occupiedE){
 
 						sRect.y = 1 * worldSpriteSize;
 						sRect.x = 9 * worldSpriteSize;
 						SDL_RenderCopy(rend, worldSpriteSheet, &sRect, &dRect);
 					}
-					else if (map[i][j].attackRange){
+					else if (map[i][j].attackRange && !map[i][j].occupiedF){
 	
 						sRect.y = 1 * worldSpriteSize;
 						sRect.x = 8 * worldSpriteSize;
@@ -77,12 +77,12 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 					}
 				}
 				else if (currentCharacter->getAttkRange() < currentCharacter->getMoveRange()){
-					if (map[i][j].moveRange){
+					if (map[i][j].moveRange && !map[i][j].occupiedF && !map[i][j].occupiedE){
 						sRect.y = 1 * worldSpriteSize;
 						sRect.x = 9 * worldSpriteSize;
 						SDL_RenderCopy(rend, worldSpriteSheet, &sRect, &dRect);
 					}
-					if (map[i][j].attackRange){
+					if (map[i][j].attackRange && !map[i][j].occupiedF){
 						sRect.y = 1 * worldSpriteSize;
 						sRect.x = 8 * worldSpriteSize;
 						SDL_RenderCopy(rend, worldSpriteSheet, &sRect, &dRect);
@@ -135,7 +135,7 @@ void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 		//SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
 
 		sRect = { 364, 32, 27, 4 };
-		dRect.x = dRect.x + (tileSize / 2) - 28;
+		dRect.x = dRect.x + (tileSize / 2) - 14;
 		dRect.y += 76;
 		dRect.w = ((renderableCharacters[i]->getCurrentHP() * 27) / renderableCharacters[i]->getMaxHP()  );
 		dRect.h = 4;

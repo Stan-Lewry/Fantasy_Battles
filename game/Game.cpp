@@ -67,6 +67,9 @@ bool Game::selectFriendlyCharacter(int mouseX, int mouseY){
 		if (activeCharacterList[i]->clickedOn(mouseX, mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY()) && activeCharacterList[i]->isDead() == false){
 			selectedFriendlyCharacter = activeCharacterList[i];
 			getRanges(selectedFriendlyCharacter);
+
+			world->selectTile(selectedFriendlyCharacter->getWorldX(), selectedFriendlyCharacter->getWorldY());
+
 			return true;
 		}
 	}
@@ -145,6 +148,8 @@ void Game::getRanges(Character* c){
 	if (c->getAttkPoints() > 0){
 		world->checkAttackRange(c->getAttkRange(), c->getWorldX(), c->getWorldY());
 	}
+
+	world->setOccupiedTiles(activeCharacterList, inactiveCharacterList);
 }
 
 // Game::characterInThatPosition(int worldX, int worldY)
@@ -207,7 +212,21 @@ void Game::processInputsGameplay(InputState inputState){
 
 	if(selectedFriendlyCharacter != NULL){
 		if(inputState.mouseButtonDown){
-			if(selectedFriendlyCharacter->getMovePoints() > 0){
+			
+			if(selectFriendlyCharacter(inputState.mouseX, inputState.mouseY)){
+				//selecting a new friendly character
+			}
+
+			else if(selectTargetCharacter(inputState.mouseX, inputState.mouseY)){
+				if(selectedFriendlyCharacter->getAttkPoints() > 0){
+					if(world->getTileWorldCoords(selectedTargetCharacter->getWorldX(), selectedTargetCharacter->getWorldY()).attackRange){
+						// do the combat
+						doCombat(selectedFriendlyCharacter, selectedTargetCharacter);
+					}
+				}
+			}
+			
+			else if(selectedFriendlyCharacter->getMovePoints() > 0){
 				mapTile clickedTile = world->getTile(inputState.mouseX, inputState.mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY());
 				if(clickedTile.exists && clickedTile.moveRange){
 					if(!characterInThatPosition(clickedTile.worldX, clickedTile.worldY)){
@@ -220,17 +239,6 @@ void Game::processInputsGameplay(InputState inputState){
 						world->clearAll();
 					}
 				}
-			}
-			else if(selectTargetCharacter(inputState.mouseX, inputState.mouseY)){
-				if(selectedFriendlyCharacter->getAttkPoints() > 0){
-					if(world->getTileWorldCoords(selectedTargetCharacter->getWorldX(), selectedTargetCharacter->getWorldY()).attackRange){
-						// do the combat
-						doCombat(selectedFriendlyCharacter, selectedTargetCharacter);
-					}
-				}
-			}
-			if(selectFriendlyCharacter(inputState.mouseX, inputState.mouseY)){
-				//selecting a new friendly character
 			}
 		}
 	}

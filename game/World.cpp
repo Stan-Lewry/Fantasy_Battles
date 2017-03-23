@@ -59,6 +59,8 @@ void World::loadMap(char* path){
 		newTile.attackRange = false;
 		newTile.moveRange = false;
 		newTile.exists = true;
+		newTile.occupiedF = false;
+		newTile.occupiedE = false;
 		
 		//get first line - tile type
 		std::getline(levelFile, line);
@@ -366,6 +368,7 @@ void World::checkMovementRange(int moveDist, int originX, int originY){
 		listA = listB;
 		listB.clear();
 	}
+	map[originY][originX].moveRange = false;
 }
 
 void World::checkAttackRange(int attackDist, int originX, int originY){
@@ -409,6 +412,8 @@ void World::checkAttackRange(int attackDist, int originX, int originY){
 		listA = listB;
 		listB.clear();
 	}
+
+	map[originY][originX].attackRange = false;
 }
 
 //Look into splitting this up into several smaller function
@@ -572,6 +577,18 @@ void World::clearAll(){
 			map[i][j].selected = false;
 			map[i][j].moveRange = false;
 			map[i][j].attackRange = false;
+			map[i][j].occupiedF = false;
+			map[i][j].occupiedE = false;
 		}
+	}
+}
+
+
+void World::setOccupiedTiles(Character* friendlyCharacters[teamSize], Character* enemyCharacters[teamSize]){
+	for(int i = 0; i < teamSize; i++){
+		map[friendlyCharacters[i]->getWorldY()][friendlyCharacters[i]->getWorldX()].occupiedF = true;
+		map[enemyCharacters[i]->getWorldY()][enemyCharacters[i]->getWorldX()].occupiedE = true;
+
+
 	}
 }

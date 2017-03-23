@@ -60,6 +60,8 @@ struct mapTile{
 	bool moveRange;
 	bool attackRange;
 	bool exists;
+	bool occupiedF;
+	bool occupiedE;
 	//bool rangedAttackRange
 };
 

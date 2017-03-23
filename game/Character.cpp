@@ -224,8 +224,8 @@ bool Character::isDead(){
 }
 
 bool Character::clickedOn(int x, int y, int rendererOffsetX, int rendererOffsetY){
-	if (x >= screenX + rendererOffsetX && x < screenX + rendererOffsetX + 128){
-		if (y >= screenY + rendererOffsetY && y < screenY + rendererOffsetY + 128){
+	if (x >= screenX + rendererOffsetX + 32 && x < screenX + rendererOffsetX + 96){
+		if (y >= screenY + rendererOffsetY && y < screenY + rendererOffsetY + 96){
 			printf("clicked on character\n");
 			return true;
 		}

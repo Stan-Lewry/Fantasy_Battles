@@ -4,6 +4,7 @@
 #define WORLD_HEADER
 
 #include "SDLUtils.h"
+#include "Character.h"
 #include <iostream>
 #include <fstream>
 
@@ -23,6 +24,8 @@ public:
 	mapTile getTile(int clickX, int clickY,
                         int renderOffsetX, int renderOffsetY);
 	mapTile getTileWorldCoords(int worldX, int worldY);
+
+	void setOccupiedTiles(Character* friendlyCharacters[teamSize], Character* enemyCharacters[teamSize]);
 	void clearAll();
 	void loadMap(char* path);
 	
