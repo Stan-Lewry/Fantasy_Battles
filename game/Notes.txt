@@ -8,4 +8,4 @@ todo:
 	- finish commenting all code 
 	- draw new tiles
 	- fix drawing tiles beneath tall tiles
-	- write new editor
+	- write new editor DONE

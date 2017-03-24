@@ -34,13 +34,19 @@ int currentType = 1;
 
 bool gRunning = false;
 
+struct tileInfo{
+	int typeX;
+	int typeY;
+	bool blocked;
+};
+
 struct tile{
 	int worldX;
 	int worldY;
 	int worldZ;
 	int screenX;
 	int screenY;
-	int type;
+	tileInfo info;
 };
 
 struct paletteButton{
@@ -49,6 +55,7 @@ struct paletteButton{
 	int w;
 	int h;
 	int tileType;
+	tileInfo info;
 };
 
 struct Button{
@@ -60,6 +67,7 @@ Button save = { 1076, screenH - 55 - 32, 32, 32 };
 Button exit_program = { 1012, screenH - 55 - 32, 32, 32 };
 
 tile map[mapH][mapW];
+tileInfo brush = {1, 0, false};
 
 paletteButton paletteButtons[10][10]; 
 
@@ -105,7 +113,8 @@ void initTextures(){
 void initMap(){
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){
-			tile newTile = { j, i, 0, j * tileSize, i * tileSize, 1 };
+			tileInfo newTileInfo = {1, 0, false};
+			tile newTile = { j, i, 0, j * tileSize, i * tileSize, newTileInfo};
 	
 
 			map[i][j] = newTile;
@@ -117,138 +126,53 @@ void initPaletteButtons(){
 	int type = 0;
 	for (int i = 0; i < 10; i++){
 		for (int j = 0; j < 10; j++){
-			paletteButton pb = { j * spriteSize + paletteX, i * spriteSize + paletteY, spriteSize, spriteSize, type };
+			tileInfo newInfo = {j, i, false};
+			paletteButton pb = { j * spriteSize + paletteX, i * spriteSize + paletteY, spriteSize, spriteSize, type , newInfo};
 			paletteButtons[i][j] = pb;
 			type++; 
 		}
 	}
+	
+	paletteButtons[0][8].info.blocked = true;
+	paletteButtons[0][9].info.blocked = true;
+	paletteButtons[1][1].info.blocked = true;
+	paletteButtons[1][2].info.blocked = true;
+	paletteButtons[1][3].info.blocked = true;
+	paletteButtons[1][4].info.blocked = true;
+	paletteButtons[1][5].info.blocked = true;
+	paletteButtons[1][6].info.blocked = true;
+	paletteButtons[2][0].info.blocked = true;
+	paletteButtons[2][1].info.blocked = true;
+	paletteButtons[2][2].info.blocked = true;
+	paletteButtons[2][3].info.blocked = true;
+	paletteButtons[2][4].info.blocked = true;
+	paletteButtons[2][5].info.blocked = true;
+	paletteButtons[2][6].info.blocked = true;
+	paletteButtons[2][7].info.blocked = true;
+	paletteButtons[2][8].info.blocked = true;
+	paletteButtons[2][9].info.blocked = true;
+	paletteButtons[3][0].info.blocked = true;
+	paletteButtons[3][1].info.blocked = true;
+	paletteButtons[3][2].info.blocked = true;
+	paletteButtons[3][4].info.blocked = true;
+	paletteButtons[3][5].info.blocked = true;
+	paletteButtons[3][6].info.blocked = true;
+	paletteButtons[3][7].info.blocked = true;
+	paletteButtons[3][8].info.blocked = true;
+	paletteButtons[3][9].info.blocked = true;
+	paletteButtons[4][0].info.blocked = true;
+	paletteButtons[4][1].info.blocked = true;
+	paletteButtons[4][2].info.blocked = true;
+	paletteButtons[4][3].info.blocked = true;
+	paletteButtons[4][4].info.blocked = true;
+	paletteButtons[4][5].info.blocked = true;
 }
 
 void renderSelectedTile(){
 	SDL_Rect sRect = { 0, 0, spriteSize, spriteSize };
 	SDL_Rect dRect = { screenW - 230, screenH - 295, 100, 100 };
-	switch (currentType){
-	case 0:
-		sRect.x = 0 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 1:
-		sRect.x = 1 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 2:
-		sRect.x = 2 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 3:
-		sRect.x = 3 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 4:
-		sRect.x = 4 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 5:
-		sRect.x = 5 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 6:
-		sRect.x = 6 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 7:
-		sRect.x = 7 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 8:
-		sRect.x = 8 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 9:
-		sRect.x = 9 * spriteSize;
-		sRect.y = 0 * spriteSize;
-		break;
-	case 10:
-		sRect.x = 0 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 11:
-		sRect.x = 1 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 12:
-		sRect.x = 2 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 13:
-		sRect.x = 3 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 14:
-		sRect.x = 4 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 15:
-		sRect.x = 5 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 16:
-		sRect.x = 6 * spriteSize;
-		sRect.y = 1 * spriteSize;
-		break;
-	case 20:
-		sRect.x = 0 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 21:
-		sRect.x = 1 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 22:
-		sRect.x = 2 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 23:
-		sRect.x = 3 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 24:
-		sRect.x = 4 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 25:
-		sRect.x = 5 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 26:
-		sRect.x = 6 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 27:
-		sRect.x = 7 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 28:
-		sRect.x = 8 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 29:
-		sRect.x = 9 * spriteSize;
-		sRect.y = 2 * spriteSize;
-		break;
-	case 30:
-		sRect.x = 0 * spriteSize;
-		sRect.y = 3 * spriteSize;
-		break;
-	case 31:
-		sRect.x = 1 * spriteSize;
-		sRect.y = 3 * spriteSize;
-		break;
-	case 32:
-		sRect.x = 2 * spriteSize;
-		sRect.y = 3 * spriteSize;
-		break;
-	}
+	sRect.x = brush.typeX * spriteSize;
+	sRect.y = brush.typeY * spriteSize;
 	SDL_RenderCopy(rend, paletteSheet, &sRect, &dRect);
 }
 
@@ -274,141 +198,15 @@ void renderMap(){
 
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){
-			//printf("rendering tile\n");
 
-			if (map[i][j].type == 0){
-				sRect.x = 0;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 1){
-				sRect.x = 1;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 2){
-				sRect.x = 2;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 3){
-				sRect.x = 3 ;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 4){
-				sRect.x = 4;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 5){
-				sRect.x = 5;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 6){
-				sRect.x = 6;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 7){
-				sRect.x = 7;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 8){
-				sRect.x = 8;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 9){
-				sRect.x = 9;
-				sRect.y = 0;
-			}
-			if (map[i][j].type == 10){
-				sRect.x = 0;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 11){
-				sRect.x = 1;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 12){
-				sRect.x = 2;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 13){
-				sRect.x = 3;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 14){
-				sRect.x = 4;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 15){
-				sRect.x = 5;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 16){
-				sRect.x = 6;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 16){
-				sRect.x = 6;
-				sRect.y = 1;
-			}
-			if (map[i][j].type == 20){
-				sRect.x = 0;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 21){
-				sRect.x = 1;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 22){
-				sRect.x = 2;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 23){
-				sRect.x = 3;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 24){
-				sRect.x = 4;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 25){
-				sRect.x = 5;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 26){
-				sRect.x = 6;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 27){
-				sRect.x = 7;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 28){
-				sRect.x = 8;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 29){
-				sRect.x = 9;
-				sRect.y = 2;
-			}
-			if (map[i][j].type == 30){
-				sRect.x = 0;
-				sRect.y = 3;
-			}
-			if (map[i][j].type == 31){
-				sRect.x = 1;
-				sRect.y = 3;
-			}
-			if (map[i][j].type == 32){
-				sRect.x = 2;
-				sRect.y = 3;
-			}
+			sRect.x = map[i][j].info.typeX;
+			sRect.y = map[i][j].info.typeY;
 
 			sRect.x *= worldSpriteSize;
 			sRect.y *= worldSpriteSize;
 
 			dRect.x = (map[i][j].screenX - map[i][j].screenY) / 2;
 			dRect.y = (map[i][j].screenX + map[i][j].screenY) / 4;
-
-			//dRect.x = map[i][j].screenX;
-			//dRect.y = map[i][j].screenY;
 
 			dRect.x += renderOffsetX;
 			dRect.y += renderOffsetY;
@@ -426,16 +224,10 @@ void renderMap(){
 				}
 			}
 
-			/*
-			
-			*/
 			dRect.y -= height;
-			//dRect.x = map[i][j].screenX + renderOffsetX;
-			//dRect.y = map[i][j].screenY + renderOffsetY;
 			SDL_RenderCopy(rend, tiles, &sRect, &dRect);
 
 			
-			//renderZVaues(std::to_string(map[i][j].worldZ).c_str(), map[i][j].worldX, map[i][j].worldY); 
 		}
 	}
 
@@ -472,34 +264,21 @@ void selectTile(int inputX, int inputY){
 			minX += renderOffsetX;
 			minX += 32;
 			minX += 32/4;
-			//maxX += screenTileSize / 4;
 
 			int minY = (map[i][j].screenX + map[i][j].screenY) / 4;
 			minY += renderOffsetY;
 			minY += 64;
 			minX += (32 / 8) * 3;
 			minY -= tileHeight;
-			//maxY += (screenTileSize / 8) * 3;
-
-			//int maxX = minX + tileSize; //+ (screenTileSize / 2);
-			//int maxY = minY + tileSize;//+ (screenTileSize / 4);
 
 			int maxX = minX + 32;
 			int maxY = minY + 16;
 
 			if(inputX >= minX && inputX < maxX){
 				if(inputY >= minY && inputY < maxY){
-					map[i][j].type = currentType;
+					map[i][j].info = brush;
 				}
 			}
-
-			/*
-			if (inputX >= map[i][j].screenX + renderOffsetX && inputX < map[i][j].screenX + tileSize + renderOffsetX){
-				if (inputY >= map[i][j].screenY + renderOffsetY && inputY < map[i][j].screenY + tileSize + renderOffsetY){
-					map[i][j].type = currentType;
-				}
-			}
-			*/
 		}
 	}
 }
@@ -513,24 +292,18 @@ bool cycleTileZValue(int inputX, int inputY){
 			minX += renderOffsetX;
 			minX += 32;
 			minX += 32/4;
-			//maxX += screenTileSize / 4;
 
 			int minY = (map[i][j].screenX + map[i][j].screenY) / 4;
 			minY += renderOffsetY;
 			minY += 64;
 			minX += (32 / 8) * 3;
 			minY -= tileHeight;
-			//maxY += (screenTileSize / 8) * 3;
-
-			//int maxX = minX + tileSize; //+ (screenTileSize / 2);
-			//int maxY = minY + tileSize;//+ (screenTileSize / 4);
 
 			int maxX = minX + 32;
 			int maxY = minY + 16;
 
 			if(inputX >= minX && inputX < maxX){
 				if(inputY >= minY && inputY < maxY){
-					//map[i][j].type = currentType;
 					if(map[i][j].worldZ < 10){
 						map[i][j].worldZ += 1;
 					}
@@ -541,42 +314,20 @@ bool cycleTileZValue(int inputX, int inputY){
 					return true;
 				}
 			}
-
-			/*
-			if (inputX >= map[i][j].screenX + renderOffsetX && inputX < map[i][j].screenX + tileSize + renderOffsetX){
-				if (inputY >= map[i][j].screenY + renderOffsetY && inputY < map[i][j].screenY + tileSize + renderOffsetY){
-					map[i][j].type = currentType;
-				}
-			}
-			*/
 		}
 	}
 	return false;
 }
 
-/*
-void cycleTileZValue(int inputX, int inputY){
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
-			if (inputX >= map[i][j].screenX + renderOffsetX && inputX < map[i][j].screenX + tileSize + renderOffsetX){
-				if (inputY >= map[i][j].screenY + renderOffsetY && inputY < map[i][j].screenY + tileSize + renderOffsetY){
-					if (map[i][j].worldZ < 15){
-						map[i][j].worldZ++;
-					}
-					else map[i][j].worldZ = 0;
-				}
-			}
-		}
-	}
-}
-*/
+
+//IN DESPERATE NEED OF RE-WRITING
 void exportMap(){
 	std::ofstream levelFile;
 	levelFile.open("DeathMountain.level");
 
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){
-			levelFile << map[i][j].type << "\n";
+			//levelFile << map[i][j].type << "\n";
 			levelFile << map[i][j].worldZ << "\n";
 		}
 		//levelFile << "\n";
@@ -587,7 +338,8 @@ void exportMap(){
 void clearMap(){
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){
-			map[i][j].type = 1;
+			map[i][j].info = {1, 0, false};
+			map[i][j].worldZ = 0;
 		}
 	}
 }
@@ -616,7 +368,8 @@ bool selectPaletteButton(int inputX, int inputY){
 		for (int j = 0; j < 10; j++){
 			if (inputX >= paletteButtons[i][j].x && inputX < paletteButtons[i][j].x + spriteSize){
 				if (inputY >= paletteButtons[i][j].y && inputY < paletteButtons[i][j].y + spriteSize){
-					currentType = paletteButtons[i][j].tileType;
+					//currentType = paletteButtons[i][j].tileType;
+					brush = paletteButtons[i][j].info;
 					return true;
 				}
 			}
