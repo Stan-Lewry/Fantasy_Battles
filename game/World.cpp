@@ -32,271 +32,42 @@ void World::setIsoScreenCoords(int x, int y){
 }
 
 
-
-//look into condensing this needs doing urgently
 void World::loadMap(char* path){
 	std::string line;
 	std::fstream levelFile(path);
 
-	int i = 0;
-	int j = 0;
-	
-	//int lineCount = (mapH * mapW) * 2;
-	int counter = 0;
-	//for (counter = 0; counter < mapW * mapH)
-	//bool reading = true;
-
-	for (counter = 0; counter < mapW * mapH; counter++){
-		
-		//initialize blank tile
+	for(int i = 0; i < mapW * mapH; i++){
 		mapTile newTile;
-		newTile.worldX = j;
-		newTile.worldY = i;
-		newTile.worldZ = 0;
+
+		std::getline(levelFile, line);
+		newTile.worldX = std::stoi(line);
+		std::getline(levelFile, line);
+		newTile.worldY = std::stoi(line);
+		std::getline(levelFile, line);
+		newTile.worldZ = std::stoi(line);
+
 		newTile.screenX = (newTile.worldX - newTile.worldY) * tileSize / 2;
 		newTile.screenY = (newTile.worldX + newTile.worldY) * tileSize / 4;
+
+		std::getline(levelFile, line);
+		newTile.typeX = std::stoi(line) * spriteSize;
+		std::getline(levelFile, line);
+		newTile.typeY = std::stoi(line) * spriteSize;
+
+		std::getline(levelFile, line);
+		if(line == "1") newTile.blocked = true;
+		else newTile.blocked = false;
+
 		newTile.selected = false;
-		newTile.attackRange = false;
 		newTile.moveRange = false;
 		newTile.exists = true;
 		newTile.occupiedF = false;
 		newTile.occupiedE = false;
-		
-		//get first line - tile type
-		std::getline(levelFile, line);
 
-		//assigne tile type
-		if (line == "0"){
-			newTile.typeX = 0;
-			newTile.typeY = 0;
-			newTile.blocked = true;
-
-		}
-		else if (line == "1"){
-			//grass tile 0 is debug tile
-			newTile.typeX = 1 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "2"){
-			//path tile
-			newTile.typeX = 2 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "3"){
-			//path tile
-			newTile.typeX = 3 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "4"){
-			//path tile
-			newTile.typeX = 4 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "5"){
-			//path tile
-			newTile.typeX = 5 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "6"){
-			//path tile
-			newTile.typeX = 6 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "7"){
-			//path tile
-			newTile.typeX = 7 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "8"){
-			//path tile
-			newTile.typeX = 8 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "9"){
-			//path tile
-			newTile.typeX = 9 * spriteSize;
-			newTile.typeY = 0 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "10"){
-			//path tile
-			newTile.typeX = 0 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "11"){
-			//path tile
-			newTile.typeX = 1 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "12"){
-			//path tile
-			newTile.typeX = 2 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "13"){
-			//path tile
-			newTile.typeX = 3 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "14"){
-			//path tile
-			newTile.typeX = 4 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "15"){
-			//path tile
-			newTile.typeX = 5 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "16"){
-			//path tile
-			newTile.typeX = 6 * spriteSize;
-			newTile.typeY = 1 * spriteSize;
-			newTile.blocked = false;
-
-		}
-		else if (line == "20"){
-			//path tile
-			newTile.typeX = 0 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "21"){
-			//path tile
-			newTile.typeX = 1 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "22"){
-			//path tile
-			newTile.typeX = 2 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "23"){
-			//path tile
-			newTile.typeX = 3 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-		}
-		else if (line == "24"){
-			//path tile
-			newTile.typeX = 4 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "25"){
-			//path tile
-			newTile.typeX = 5 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "26"){
-			//path tile
-			newTile.typeX = 6 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "27"){
-			//path tile
-			newTile.typeX = 7 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "28"){
-			//path tile
-			newTile.typeX = 8 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "29"){
-			//path tile
-			newTile.typeX = 9 * spriteSize;
-			newTile.typeY = 2 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "30"){
-			//path tile
-			newTile.typeX = 0 * spriteSize;
-			newTile.typeY = 3 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "31"){
-			//path tile
-			newTile.typeX = 1 * spriteSize;
-			newTile.typeY = 3 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		else if (line == "32"){
-			//path tile
-			newTile.typeX = 2 * spriteSize;
-			newTile.typeY = 3 * spriteSize;
-			newTile.blocked = true;
-
-		}
-		//get next line - this will be the zAxis 
-		std::getline(levelFile, line);
-		std::stringstream convert(line);
-		convert >> newTile.worldZ;
-
-		//string to int, then assign it to the current tile
-
-		//std::getline(levelFile, currentLine);
-
-		map[i][j] = newTile;
-		j++;
-		if (j > 14){
-			i++;
-			j = 0;
-		}
+		map[newTile.worldY][newTile.worldX] = newTile;
 	}
 	levelFile.close();
-
 }
-
-/*
-This function
-*/
 
 bool World::isTraversable(int x, int y){
 	if (x >= 0){
@@ -333,7 +104,6 @@ void World::checkMovementRange(int moveDist, int originX, int originY){
 			int currentZ = listA.at(j).worldZ;
 
 			if (isTraversable(currentX, currentY + 1)){
-				//if(map[]) if adjacent cells z val is within one of the current z value
 				if(currentZ - map[currentY + 1][currentX].worldZ >= -1 && currentZ - map[currentY + 1][currentX].worldZ <= 1){
 					mapTile southAdj = map[currentY + 1][currentX];
 					listB.push_back(southAdj);
@@ -350,7 +120,6 @@ void World::checkMovementRange(int moveDist, int originX, int originY){
 
 			if (isTraversable(currentX, currentY - 1)){
 				int heightDif = currentZ - map[currentY-1][currentX].worldZ;
-				//if(currentZ - map[currentY - 1][currentX].worldZ >= -1 && currentZ - map[current])
 				if(heightDif >= -1 && heightDif <= 1){
 					mapTile northAdj = map[currentY - 1][currentX];
 					listB.push_back(northAdj);
@@ -539,21 +308,6 @@ mapTile World::getTile(int clickX, int clickY, int renderOffsetX, int renderOffs
 					return map[i][j];
 				}
 			}
-
-			/*
-			if (clickX >= map[i][j].screenX + renderOffsetX && clickX < map[i][j].screenX + renderOffsetX + tileSize){
-				if (clickY >= map[i][j].screenY + renderOffsetY && clickY < map[i][j].screenY + renderOffsetY + tileSize){	
-					std::cout << "clicked at: " << j << ", " << i << std::endl;
-					
-					//map[i][j].selected = true;
-					
-					//checkMovementRange(5, map[i][j].worldX, map[i][j].worldY);
-					
-					return map[i][j];
-					//map[5][4].selected = true;
-				}
-			}
-			*/
 		}
 	}
 	

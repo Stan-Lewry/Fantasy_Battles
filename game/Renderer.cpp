@@ -26,7 +26,7 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 	renderUI(renderableUIElements, currentCharacter);
 	renderCursor(mouseX, mouseY);
 	renderAnimationObjects(animationObject);
-	renderMapForeground();
+	//renderMapForeground();
 	//renderText("CUM", font, 600, 600, 255, 0, 0);
 
 	if (timer > 1){
@@ -198,7 +198,7 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 
 void Renderer::renderMapBackground(){
 	SDL_Rect dRect = { 0, 0, screenW, screenH };
-	SDL_SetRenderDrawColor(rend, 102, 204, 255, 1);
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
 	SDL_RenderFillRect(rend, &dRect);
 }
 
@@ -370,7 +370,7 @@ SDL_Texture* Renderer::loadPNG(char path[]){
 
 
 void Renderer::initTextures(){
-	worldSpriteSheet = loadPNG("Assets/iso_tiles_large.png");
+	worldSpriteSheet = loadPNG("Assets/iso_tiles_large01.png");
 	characterSpriteSheet = loadPNG("Assets/characters05.png");
 	uiSpriteSheet = loadPNG("Assets/ui.png");
 	titleScreen = loadPNG("Assets/title_screen.png");

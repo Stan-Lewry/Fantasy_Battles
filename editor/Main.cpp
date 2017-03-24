@@ -23,7 +23,7 @@ SDL_Texture* paletteSheet;
 SDL_Event evnt;
 TTF_Font* font = NULL; 
 
-int renderOffsetX = 0; 
+int renderOffsetX = 300; 
 int renderOffsetY = 0;
 
 int paletteX = screenW - 340;
@@ -61,6 +61,8 @@ struct paletteButton{
 struct Button{
 	int x, y, w, h;
 };
+
+
 
 Button trash = { screenW - 108 - 32, screenH - 55 - 32, 32, 32 };
 Button save = { 1076, screenH - 55 - 32, 32, 32 };
@@ -105,8 +107,8 @@ SDL_Texture* loadPNG(char* path){
 }
 
 void initTextures(){
-	tiles = loadPNG("Assets/iso_tiles_large.png");
-	paletteSheet = loadPNG("Assets/2d_tiles.png");
+	tiles = loadPNG("Assets/iso_tiles_large01.png");
+	paletteSheet = loadPNG("Assets/palette.png");
 	ui = loadPNG("Assets/UI.png");
 }
 
@@ -255,8 +257,8 @@ void renderAll(){
 
 
 void selectTile(int inputX, int inputY){
-	for (int i = mapH; i > 0; i--){
-		for (int j = mapW; j > 0; j--){
+	for (int i = 0; i < mapH; i++){
+		for (int j = 0; j < mapW; j++){
 
 			int tileHeight = map[i][j].worldZ * 16;
 
@@ -323,8 +325,22 @@ bool cycleTileZValue(int inputX, int inputY){
 //IN DESPERATE NEED OF RE-WRITING
 void exportMap(){
 	std::ofstream levelFile;
-	levelFile.open("DeathMountain.level");
+	levelFile.open("newTestLevel.level");
 
+	for(int i = 0; i < mapH; i++){
+		for(int j = 0; j < mapW; j++){
+			levelFile << map[i][j].worldX << "\n";			//Write the world X
+			levelFile << map[i][j].worldY << "\n";			//Write the world y
+			levelFile << map[i][j].worldZ << "\n";			//Write the world z
+			levelFile << map[i][j].info.typeX << "\n";		//Write the spritesheet x
+			levelFile << map[i][j].info.typeY << "\n";		//Write the spritesheet y
+			if(map[i][j].info.blocked) levelFile << "1\n";	//1 = blocked is true
+			else levelFile << "0\n"; 						//0 = blocked is false
+		}
+		levelFile << "\n";									//end of strip
+	}
+
+	/*
 	for (int i = 0; i < mapH; i++){
 		for (int j = 0; j < mapW; j++){
 			//levelFile << map[i][j].type << "\n";
@@ -333,6 +349,7 @@ void exportMap(){
 		//levelFile << "\n";
 	}
 	levelFile.close();
+	*/
 }
 
 void clearMap(){

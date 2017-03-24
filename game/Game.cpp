@@ -11,7 +11,7 @@ Game::Game(){
 	world = new World();
 	//world->initBlankMap();
 	//world->initMap();
-	world->loadMap("Levels/Mountain.level");
+	world->loadMap("Levels/newTestLevel.level");
 	renderer = new Renderer(sdlUtils->rend);
 	ui = new UI();
 	ui->initMainMenuElements();
@@ -25,11 +25,11 @@ Game::Game(){
 // Initilaisises the two "teams" as arrays of type Character
 // Active character list and innactive character lists are swapped at the end of each turn
 void Game::initCharacters(){
-	activeCharacterList[0] = new Character(0, 6, 0, 0 * tileSize, 6 * tileSize, 4, FIGHTER, "Blue Fighter");
-	activeCharacterList[1] = new Character(0, 7, 0, 0 * tileSize, 7 * tileSize,  4, FIGHTER, "Blue Fighter");
-	activeCharacterList[2] = new Character(0, 8, 0, 0 * tileSize, 8 * tileSize, 4, FIGHTER, "Blue Fighter");
-	activeCharacterList[3] = new Character(0, 9, 0, 0 * tileSize, 9 * tileSize, 6, SPEARMAN, "Blue Spearman");
-	activeCharacterList[4] = new Character(0, 10,0, 0 * tileSize,10 * tileSize, 8, ARCHER, "Blue Archer" );
+	activeCharacterList[0] = new Character(1, 6, 0, 1 * tileSize, 6 * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[1] = new Character(1, 7, 0, 1 * tileSize, 7 * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[2] = new Character(1, 8, 0, 1 * tileSize, 8 * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[3] = new Character(1, 9, 0, 1 * tileSize, 9 * tileSize, 6, SPEARMAN, "Blue Spearman");
+	activeCharacterList[4] = new Character(1, 10,0, 1 * tileSize,10 * tileSize, 8, ARCHER, "Blue Archer" );
 
 
 	inactiveCharacterList[0] = new Character(14, 6, 0, 14 * tileSize, 6 * tileSize, 3, WIZARD, "Red Wizard");
