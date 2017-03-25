@@ -15,6 +15,12 @@
 #define worldSpriteSize 128
 #define paletteSpriteSize 32
 
+const int mapMaxWidth = 50;
+const int mapMaxHeight = 50;
+
+int mapWidth = 33;
+int mapHeight = 10;
+
 SDL_Window* window;
 SDL_Renderer* rend;
 SDL_Texture* tiles;
@@ -38,6 +44,8 @@ struct tileInfo{
 	int typeX;
 	int typeY;
 	bool blocked;
+	bool blueSpawner;
+	bool redSpawner;
 };
 
 struct tile{
@@ -63,13 +71,13 @@ struct Button{
 };
 
 
-
 Button trash = { screenW - 108 - 32, screenH - 55 - 32, 32, 32 };
 Button save = { 1076, screenH - 55 - 32, 32, 32 };
 Button exit_program = { 1012, screenH - 55 - 32, 32, 32 };
 
-tile map[mapH][mapW];
-tileInfo brush = {1, 0, false};
+tile map[mapMaxHeight][mapMaxWidth];
+tileInfo brush = {1, 0, false, false, false};
+
 
 paletteButton paletteButtons[10][10]; 
 
@@ -77,7 +85,7 @@ bool initSDL(){
 	SDL_Init(SDL_INIT_EVERYTHING);
 	TTF_Init();
 	IMG_Init(IMG_INIT_PNG);
-	font = TTF_OpenFont("Fonts/font.ttf", 22);
+	font = TTF_OpenFont("Fonts/half_bold_pixel.ttf", 30);
 	window = SDL_CreateWindow("Level Editor", 0, 0, screenW, screenH, SDL_WINDOW_SHOWN);
 	if (window != NULL){
 		printf("Window Initialized\n");
@@ -107,15 +115,15 @@ SDL_Texture* loadPNG(char* path){
 }
 
 void initTextures(){
-	tiles = loadPNG("Assets/iso_tiles_large01.png");
-	paletteSheet = loadPNG("Assets/palette.png");
-	ui = loadPNG("Assets/UI.png");
+	tiles = loadPNG("Assets/iso_tiles_large_spawners01.png");
+	paletteSheet = loadPNG("Assets/palette02.png");
+	ui = loadPNG("Assets/UI01.png");
 }
 
 void initMap(){
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
-			tileInfo newTileInfo = {1, 0, false};
+	for (int i = 0; i < mapMaxHeight; i++){
+		for (int j = 0; j < mapMaxWidth; j++){
+			tileInfo newTileInfo = {1, 0, false, false, false};
 			tile newTile = { j, i, 0, j * tileSize, i * tileSize, newTileInfo};
 	
 
@@ -128,7 +136,7 @@ void initPaletteButtons(){
 	int type = 0;
 	for (int i = 0; i < 10; i++){
 		for (int j = 0; j < 10; j++){
-			tileInfo newInfo = {j, i, false};
+			tileInfo newInfo = {j, i, false, false, false};
 			paletteButton pb = { j * spriteSize + paletteX, i * spriteSize + paletteY, spriteSize, spriteSize, type , newInfo};
 			paletteButtons[i][j] = pb;
 			type++; 
@@ -168,6 +176,9 @@ void initPaletteButtons(){
 	paletteButtons[4][3].info.blocked = true;
 	paletteButtons[4][4].info.blocked = true;
 	paletteButtons[4][5].info.blocked = true;
+
+	paletteButtons[1][8].info.blueSpawner = true;
+	paletteButtons[1][9].info.redSpawner = true;
 }
 
 void renderSelectedTile(){
@@ -189,6 +200,17 @@ void renderZVaues(const char* num, int worldX, int worldY){
 	SDL_DestroyTexture(texture);
 }
 
+void renderText(const char* text, int screenX, int screenY){
+	SDL_Rect dRect = {screenX, screenY, 0, 0};
+	TTF_SizeText(font, text, &dRect.w, &dRect.h);
+	SDL_Color col = {255, 255, 255};
+	SDL_Surface* tempSurf = TTF_RenderText_Solid(font, text, col);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(rend, tempSurf);
+	SDL_RenderCopy(rend, texture, NULL, &dRect);
+	SDL_FreeSurface(tempSurf);
+	SDL_DestroyTexture(texture);
+}
+
 void renderMap(){
 	SDL_Rect bg = { 0, 0, screenW, screenH };
 	SDL_SetRenderDrawColor(rend, 102, 204, 255, 1);
@@ -198,8 +220,8 @@ void renderMap(){
 	SDL_Rect dRect = { 0, 0, screenTileSize, screenTileSize };
 
 
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapHeight; i++){
+		for (int j = 0; j < mapWidth; j++){
 
 			sRect.x = map[i][j].info.typeX;
 			sRect.y = map[i][j].info.typeY;
@@ -229,6 +251,16 @@ void renderMap(){
 			dRect.y -= height;
 			SDL_RenderCopy(rend, tiles, &sRect, &dRect);
 
+			if(map[i][j].info.blueSpawner){
+				sRect.x = 8 * worldSpriteSize;
+				sRect.y = 1 * worldSpriteSize;
+				SDL_RenderCopy(rend, tiles, &sRect, &dRect);
+			}
+			if(map[i][j].info.redSpawner){
+				sRect.x = 9 * worldSpriteSize;
+				sRect.y = 1 * worldSpriteSize;
+				SDL_RenderCopy(rend, tiles, &sRect, &dRect);
+			}
 			
 		}
 	}
@@ -240,10 +272,33 @@ void renderUI(){
 	SDL_Rect dRect = { 0, 0, screenW, screenH };
 	SDL_RenderCopy(rend, ui, &sRect, &dRect);
 
-
 	sRect = { 0, 0, 320, 320 };
 	dRect = {paletteX, paletteY, 320, 320 };
 	SDL_RenderCopy(rend, paletteSheet, &sRect, &dRect);
+
+	//renderText(std::to_string(mapWidth))
+	std::string mapSizeString = std::to_string(mapWidth).append("x").append(std::to_string(mapHeight));
+
+	renderText(mapSizeString.c_str(), 50, screenH - 85);
+
+	/*
+	SDL_Rect xUpArrow = {38, screenH - 125, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &xUpArrow);
+
+	SDL_Rect yUpArrow = {133, screenH - 125, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &yUpArrow);
+
+	SDL_Rect xDownArrow = {38, screenH - 50, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &xDownArrow);
+
+	SDL_Rect yDownArrow = {133, screenH - 50, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &yDownArrow);
+	*/
+
 }
 
 void renderAll(){
@@ -257,8 +312,8 @@ void renderAll(){
 
 
 void selectTile(int inputX, int inputY){
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapHeight; i++){
+		for (int j = 0; j < mapWidth; j++){
 
 			int tileHeight = map[i][j].worldZ * 16;
 
@@ -278,7 +333,13 @@ void selectTile(int inputX, int inputY){
 
 			if(inputX >= minX && inputX < maxX){
 				if(inputY >= minY && inputY < maxY){
-					map[i][j].info = brush;
+					if(brush.blueSpawner){
+						map[i][j].info.blueSpawner = true;
+					}
+					else if(brush.redSpawner){
+						map[i][j].info.redSpawner = true;
+					}
+					else map[i][j].info = brush;
 				}
 			}
 		}
@@ -286,8 +347,8 @@ void selectTile(int inputX, int inputY){
 }
 
 bool cycleTileZValue(int inputX, int inputY){
-	for (int i = mapH; i > 0; i--){
-		for (int j = mapW; j > 0; j--){
+	for (int i = mapHeight; i > 0; i--){
+		for (int j = mapWidth; j > 0; j--){
 
 			int tileHeight = map[i][j].worldZ * 16;
 			int minX = (map[i][j].screenX - map[i][j].screenY) / 2;
@@ -322,13 +383,51 @@ bool cycleTileZValue(int inputX, int inputY){
 }
 
 
-//IN DESPERATE NEED OF RE-WRITING
+//this now needs to include writing out the spawners and the map size
+//also include writing out a background colour
 void exportMap(){
 	std::ofstream levelFile;
-	levelFile.open("newTestLevel.level");
+	levelFile.open("newTestLevel01.level");
 
-	for(int i = 0; i < mapH; i++){
-		for(int j = 0; j < mapW; j++){
+	//First thing we want to do is write out the width and height of the map 
+	levelFile << mapWidth << "\n";							//Write the width of the map
+	levelFile << mapHeight << "\n";							//Write the height of the map
+	levelFile << "255\n";									//Background R
+	levelFile << "255\n";									//Background G
+	levelFile << "255\n";									//Background B
+
+	//We then construct a list of blue and red team spawners in the map which will be written next
+	tile blueSpawners[5];
+	tile redSpawners[5];
+	int redSpawnersFound = 0;
+	int blueSpawnersFoud = 0;
+	for(int i = 0; i < mapHeight; i++){
+		for(int j = 0; j < mapWidth; j++){
+			if(map[i][j].info.blueSpawner && blueSpawnersFoud < 5){
+				blueSpawners[blueSpawnersFoud] = map[i][j];
+				blueSpawnersFoud += 1;
+			}
+			if(map[i][j].info.redSpawner && redSpawnersFound < 5){
+				redSpawners[redSpawnersFound] = map[i][j];
+				redSpawnersFound += 1;
+			}
+		}
+	}
+
+	//Now we write the world coords of these spawners to our file
+	//blue team first
+	for(int i = 0; i < 5; i++){
+		levelFile << blueSpawners[i].worldX << "\n";
+		levelFile << blueSpawners[i].worldY << "\n";
+	}
+	//then the red team
+	for(int i = 0; i < 5; i ++){
+		levelFile << redSpawners[i].worldX << "\n";
+		levelFile << redSpawners[i].worldY << "\n";
+	}
+
+	for(int i = 0; i < mapHeight; i++){
+		for(int j = 0; j < mapWidth; j++){
 			levelFile << map[i][j].worldX << "\n";			//Write the world X
 			levelFile << map[i][j].worldY << "\n";			//Write the world y
 			levelFile << map[i][j].worldZ << "\n";			//Write the world z
@@ -337,26 +436,64 @@ void exportMap(){
 			if(map[i][j].info.blocked) levelFile << "1\n";	//1 = blocked is true
 			else levelFile << "0\n"; 						//0 = blocked is false
 		}
-		levelFile << "\n";									//end of strip
 	}
-
-	/*
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
-			//levelFile << map[i][j].type << "\n";
-			levelFile << map[i][j].worldZ << "\n";
-		}
-		//levelFile << "\n";
-	}
-	levelFile.close();
-	*/
 }
 
 void clearMap(){
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapMaxHeight; i++){
+		for (int j = 0; j < mapMaxWidth; j++){
 			map[i][j].info = {1, 0, false};
 			map[i][j].worldZ = 0;
+		}
+	}
+}
+
+bool selectMapScaleButtons(int inputX, int inputY){
+	/*
+	SDL_Rect xUpArrow = {38, screenH - 125, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &xUpArrow);
+
+	SDL_Rect yUpArrow = {133, screenH - 125, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &yUpArrow);
+
+	SDL_Rect xDownArrow = {38, screenH - 50, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &xDownArrow);
+
+	SDL_Rect yDownArrow = {133, screenH - 50, 32, 32};
+	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
+	SDL_RenderFillRect(rend, &yDownArrow);
+	*/
+
+
+	if(inputX >= 38 && inputX < 38 + 32  && inputY >= screenH - 125 && inputY < screenH - 125 + 32){
+		//x up arrow
+		std::cout << "x up arrow clicked\n";
+		if(mapWidth < mapMaxWidth){
+			mapWidth += 1;
+		}
+	}
+	if(inputX >= 133 && inputX < 133 + 32 && inputY >= screenH - 125 && inputY < screenH - 125 + 32){
+		//y up arrow
+		std::cout << "y up arrow clicked\n";
+		if(mapHeight < mapMaxHeight){
+			mapHeight += 1;
+		}
+	}
+	if(inputX >= 38 && inputX < 38 + 32 && inputY >= screenH - 50 && inputY < screenH - 50 + 32){
+		//x down arrow
+		std::cout << "x down arrow clicked\n";
+		if(mapWidth > 1){
+			mapWidth -= 1;
+		}
+	}
+	if(inputX >= 133 && inputX < 133 + 32 && inputY >= screenH - 50 && inputY < screenH - 50 + 32){
+		//y down arrow
+		std::cout << "y down arrow clicked\n";
+		if(mapHeight > 1){
+			mapHeight -= 1;
 		}
 	}
 }
@@ -407,12 +544,14 @@ void handleInputs(){
 			if (evnt.button.button == SDL_BUTTON_LEFT){
 				if (!selectPaletteButton(mouseX, mouseY)){
 					if (!selectOptionsButton(mouseX, mouseY)){
-						selectTile(mouseX, mouseY);
+						if(!selectMapScaleButtons(mouseX, mouseY)){
+							selectTile(mouseX, mouseY);
+						}
 					}
 				}
 			}
 			if (evnt.button.button == SDL_BUTTON_RIGHT){
-				cycleTileZValue(mouseX, mouseY);
+				//cycleTileZValue(mouseX, mouseY);
 			}
 			//selectTile(mouseX, mouseY);
 			break;

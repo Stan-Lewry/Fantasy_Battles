@@ -12,14 +12,15 @@
 class Renderer{
 public:
 	Renderer(SDL_Renderer* _rend);
-	void renderGame(mapTile map[mapH][mapW], Character* renderableCharacters1[teamSize], 
+
+	void renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* renderableCharacters1[teamSize], 
 		Character* renderableCharacters2[teamSize], Character* currentCharacter, 
 		UIElement renderableUIElements[1], AnimationObject* animationObject, int mousex, int mouseY);
 
-	void renderCharacters(Character* renderableCharacters[teamSize], mapTile map[mapW][mapH]);
+	void renderCharacters(Character* renderableCharacters[teamSize], mapTile map[mapW][mapH], int mapWidth, int mapHeight);
 	void renderStatusBars(Character* renderableCharacters[teamSize]);
 	void renderUI(UIElement renderableUIElements[1], Character* currentCharacter);
-	void renderWorld(mapTile map[mapH][mapW], Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]);
+	void renderWorld(mapTile map[mapH][mapW],int mapWidth, int mapHeight, Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]);
 	void renderMapBackground();
 	void renderMapForeground();
 	void renderCursor(int mouseX, int mouseY);

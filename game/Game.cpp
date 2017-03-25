@@ -11,7 +11,7 @@ Game::Game(){
 	world = new World();
 	//world->initBlankMap();
 	//world->initMap();
-	world->loadMap("Levels/newTestLevel.level");
+	world->loadMap("Levels/newTestLevel02.level");
 	renderer = new Renderer(sdlUtils->rend);
 	ui = new UI();
 	ui->initMainMenuElements();
@@ -25,18 +25,53 @@ Game::Game(){
 // Initilaisises the two "teams" as arrays of type Character
 // Active character list and innactive character lists are swapped at the end of each turn
 void Game::initCharacters(){
-	activeCharacterList[0] = new Character(1, 6, 0, 1 * tileSize, 6 * tileSize, 4, FIGHTER, "Blue Fighter");
-	activeCharacterList[1] = new Character(1, 7, 0, 1 * tileSize, 7 * tileSize, 4, FIGHTER, "Blue Fighter");
-	activeCharacterList[2] = new Character(1, 8, 0, 1 * tileSize, 8 * tileSize, 4, FIGHTER, "Blue Fighter");
-	activeCharacterList[3] = new Character(1, 9, 0, 1 * tileSize, 9 * tileSize, 6, SPEARMAN, "Blue Spearman");
-	activeCharacterList[4] = new Character(1, 10,0, 1 * tileSize,10 * tileSize, 8, ARCHER, "Blue Archer" );
 
+	Point* blueSpawners = world->getBlueSpawners();
+	Point* redSpawners = world->getRedSpawners();
+	int x, y;
+	
+	//initialise active team (blue team) from the list of blue spawners
+	x = blueSpawners[0].x;
+	y = blueSpawners[0].y;
+	activeCharacterList[0] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter");
 
-	inactiveCharacterList[0] = new Character(14, 6, 0, 14 * tileSize, 6 * tileSize, 3, WIZARD, "Red Wizard");
-	inactiveCharacterList[1] = new Character(14, 7, 0, 14 * tileSize, 7 * tileSize, 3, WIZARD, "Red Wizard");
-	inactiveCharacterList[2] = new Character(14, 8, 0, 14 * tileSize, 8 * tileSize, 3, WIZARD, "Red Wizard");
-	inactiveCharacterList[3] = new Character(14, 9, 0, 14 * tileSize, 9 * tileSize, 3, WIZARD, "Red Wizard");
-	inactiveCharacterList[4] = new Character(14,10, 0, 14 * tileSize,10 * tileSize, 3, WIZARD, "Red Wizard");
+	x = blueSpawners[1].x;
+	y = blueSpawners[1].y;
+	activeCharacterList[1] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter");
+
+	x = blueSpawners[2].x;
+	y = blueSpawners[2].y;
+	activeCharacterList[2] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter");
+
+	x = blueSpawners[3].x;
+	y = blueSpawners[3].y;
+	activeCharacterList[3] = new Character(x, y, 0, x * tileSize, y * tileSize, 6, SPEARMAN, "Blue Spearman");
+
+	x = blueSpawners[4].x;
+	y = blueSpawners[4].y;
+	activeCharacterList[4] = new Character(x, y, 0, x * tileSize, y * tileSize, 8, ARCHER, "Blue Archer" );
+
+	
+	//now initialise the inactive (red) team from the list of red spawners
+	x = redSpawners[0].x;
+	y = redSpawners[0].y;
+	inactiveCharacterList[0] = new Character(x, y, 0, x * tileSize, y * tileSize, 5, FIGHTER, "Red Fighter");
+
+	x = redSpawners[1].x;
+	y = redSpawners[1].y;
+	inactiveCharacterList[1] = new Character(x, y, 0, x * tileSize, y * tileSize, 3, WIZARD, "Red Wizard");
+
+	x = redSpawners[2].x;
+	y = redSpawners[2].y;
+	inactiveCharacterList[2] = new Character(x, y, 0, x * tileSize, y * tileSize, 7, SPEARMAN, "Red Spearman");
+	
+	x = redSpawners[3].x;
+	y = redSpawners[3].y;
+	inactiveCharacterList[3] = new Character(x, y, 0, x * tileSize, y * tileSize, 9, ARCHER, "Red Archer");
+
+	x = redSpawners[4].x;
+	y = redSpawners[4].y;
+	inactiveCharacterList[4] = new Character(x,y, 0, x * tileSize, y * tileSize, 1, KNIGHT, "Red Knight");
 }
 
 // Game::switchCharacterLists()
@@ -448,7 +483,7 @@ void Game::gameLoop(){
 		update(); 
 		//renderMap();
 		if (currentState == GAMEPLAY){
-			renderer->renderGame(world->map, activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
+			renderer->renderGame(world->map, world->getMapWidth(), world->getMapHeight(), activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
 		}
 		else if (currentState == MAINMENU){
 			renderer->renderMainMenu(ui->getElementList(), input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);

@@ -4,6 +4,7 @@
 
 mapTile* World::getMap(){
 	return *map;
+
 }
 
 void World::initBlankMap(){
@@ -14,8 +15,8 @@ void World::initBlankMap(){
 	grass.selected = false;
 	grass.moveRange = false;
 	grass.attackRange = false;
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapHeight; i++){
+		for (int j = 0; j < mapWidth; j++){
 			grass.screenX = (j - i) * tileSize / 2;
 			grass.screenY = (j + i) * tileSize / 4;
 			grass.worldX = j;
@@ -36,7 +37,37 @@ void World::loadMap(char* path){
 	std::string line;
 	std::fstream levelFile(path);
 
-	for(int i = 0; i < mapW * mapH; i++){
+	std::getline(levelFile, line);
+	mapWidth = std::stoi(line);												// read map width
+
+	std::getline(levelFile, line);
+	mapHeight = std::stoi(line);											// read map height
+
+	// next three lines are background rgb values
+
+	std::getline(levelFile, line);
+	std::getline(levelFile, line);
+	std::getline(levelFile, line);
+
+	//Build the list of blue team spawners
+	for(int i = 0; i < 5; i++){
+		std::getline(levelFile, line);
+		blueSpawners[i].x = std::stoi(line);
+		std::getline(levelFile, line);
+		blueSpawners[i].y = std::stoi(line);
+	}
+
+	//Build the list of red team spawners
+	for(int i = 0; i < 5; i ++){
+		std::getline(levelFile, line);
+		redSpawners[i].x = std::stoi(line);
+		std::getline(levelFile, line);
+		redSpawners[i].y = std::stoi(line);
+	}
+
+	// now do the same as before
+
+	for(int i = 0; i < mapWidth * mapHeight; i++){
 		mapTile newTile;
 
 		std::getline(levelFile, line);
@@ -68,12 +99,54 @@ void World::loadMap(char* path){
 	}
 	levelFile.close();
 }
+/*
+void World::loadMap(char* path){
+
+	mapWidth = 15;
+	mapHeight = 15;
+
+	std::string line;
+	std::fstream levelFile(path);
+
+	for(int i = 0; i < mapWidth * mapHeight; i++){
+		mapTile newTile;
+
+		std::getline(levelFile, line);
+		newTile.worldX = std::stoi(line);
+		std::getline(levelFile, line);
+		newTile.worldY = std::stoi(line);
+		std::getline(levelFile, line);
+		newTile.worldZ = std::stoi(line);
+
+		newTile.screenX = (newTile.worldX - newTile.worldY) * tileSize / 2;
+		newTile.screenY = (newTile.worldX + newTile.worldY) * tileSize / 4;
+
+		std::getline(levelFile, line);
+		newTile.typeX = std::stoi(line) * spriteSize;
+		std::getline(levelFile, line);
+		newTile.typeY = std::stoi(line) * spriteSize;
+
+		std::getline(levelFile, line);
+		if(line == "1") newTile.blocked = true;
+		else newTile.blocked = false;
+
+		newTile.selected = false;
+		newTile.moveRange = false;
+		newTile.exists = true;
+		newTile.occupiedF = false;
+		newTile.occupiedE = false;
+
+		map[newTile.worldY][newTile.worldX] = newTile;
+	}
+	levelFile.close();
+}
+*/
 
 bool World::isTraversable(int x, int y){
 	if (x >= 0){
-		if (x < mapW){
+		if (x < mapWidth){
 			if (y >= 0){
-				if (y < mapH){
+				if (y < mapHeight){
 					if (map[y][x].blocked == false){
 						return true;
 					}
@@ -292,8 +365,8 @@ std::vector<Point> World::getPath(int originX, int originY, int destX, int destY
 mapTile World::getTile(int clickX, int clickY, int renderOffsetX, int renderOffsetY){
 
 
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapHeight; i++){
+		for (int j = 0; j < mapWidth; j++){
 			//map[i][j].selected = false;
 
 			int minCollisionX = map[i][j].screenX + (tileSize / 4);
@@ -326,8 +399,8 @@ void World::selectTile(int worldX, int worldY){
 }
 
 void World::clearAll(){
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapHeight; i++){
+		for (int j = 0; j < mapWidth; j++){
 			map[i][j].selected = false;
 			map[i][j].moveRange = false;
 			map[i][j].attackRange = false;
@@ -345,4 +418,20 @@ void World::setOccupiedTiles(Character* friendlyCharacters[teamSize], Character*
 
 
 	}
+}
+
+int World::getMapWidth(){
+	return mapWidth;
+}
+
+int World::getMapHeight(){
+	return mapHeight;
+}
+
+Point* World::getBlueSpawners(){
+	return blueSpawners;
+}
+
+Point* World::getRedSpawners(){
+	return redSpawners;
 }

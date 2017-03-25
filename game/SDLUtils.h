@@ -23,11 +23,13 @@
 
 
 
-const int mapW = 15;
-const int mapH = 15;
-const int mapSize = mapW * mapH;
+const int mapW = 50;
+const int mapH = 50;
 
 
+
+//int mapW = 15;
+//int mapH = 15;
 //int renderOffsetX = -200;
 //int renderOffsetY = -200;
 

@@ -6,7 +6,7 @@ Renderer::Renderer(SDL_Renderer* _rend){
 	initFonts();
 }
 
-void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacters1[teamSize], Character* renderableCharacters2[teamSize], Character* currentCharacter, UIElement renderableUIElements[1], AnimationObject* animationObject, int mouseX, int mouseY){
+void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* renderableCharacters1[teamSize], Character* renderableCharacters2[teamSize], Character* currentCharacter, UIElement renderableUIElements[1], AnimationObject* animationObject, int mouseX, int mouseY){
 	
 	oldTime = currentTime;
 	currentTime = SDL_GetTicks();
@@ -18,9 +18,9 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 	
 	SDL_RenderClear(rend);
 	renderMapBackground();
-	renderWorld(map, currentCharacter, renderableCharacters1, renderableCharacters2);
-	renderCharacters(renderableCharacters1, map);
-	renderCharacters(renderableCharacters2, map);
+	renderWorld(map, mapWidth, mapHeight, currentCharacter, renderableCharacters1, renderableCharacters2);
+	renderCharacters(renderableCharacters1, map, mapWidth, mapHeight);
+	renderCharacters(renderableCharacters2, map, mapWidth, mapHeight);
 	renderStatusBars(renderableCharacters1);
 	renderStatusBars(renderableCharacters2);
 	renderUI(renderableUIElements, currentCharacter);
@@ -46,12 +46,12 @@ void Renderer::renderGame(mapTile map[mapH][mapW], Character* renderableCharacte
 	SDL_RenderPresent(rend);
 }
 
-void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]){
+void Renderer::renderWorld(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]){
 	SDL_Rect sRect = { 0, 0, worldSpriteSize, worldSpriteSize };
 	SDL_Rect dRect = { 0, 0, 256, 256 };
 	
-	for (int i = 0; i < mapH; i++){
-		for (int j = 0; j < mapW; j++){
+	for (int i = 0; i < mapHeight; i++){
+		for (int j = 0; j < mapWidth; j++){
 			
 			int height = map[i][j].worldZ * 32;
 			
@@ -120,7 +120,7 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], Character* currentCharacter,
 	}
 }
 
-void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW][mapH]){
+void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW][mapH], int mapWidth, int mapHeight){
 	for(int i = 0 ; i < teamSize; i++){
 		SDL_Rect sRect = {charList[i]->getAnimationFrame() * spriteSize, charList[i]->getSpriteID() * spriteSize, spriteSize, spriteSize};
 		SDL_Rect dRect = {charList[i]->getScreenX() + renderOffsetX, charList[i]->getScreenY() - (charList[i]->getWorldZ() * 32) + renderOffsetY, tileSize, tileSize};

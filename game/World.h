@@ -10,8 +10,10 @@
 
 class World{
 public:	
-	mapTile map[mapH][mapH];
+	mapTile map[mapH][mapW];
 	//World();
+
+	//Map* getTheMap();
 	mapTile* getMap();
 	void initMap();
 	void initBlankMap();
@@ -31,10 +33,21 @@ public:
 	
 	void setIsoScreenCoords(int x, int y);
 
+	int getMapWidth();
+	int getMapHeight();
+
+	Point* getBlueSpawners();
+	Point* getRedSpawners();
+
 private:
 
 	int spriteSize = 64;
 	int tileSize = 128;
+	int mapWidth;
+	int mapHeight;
+
+	Point blueSpawners[5];
+	Point redSpawners[5];
 };
 
 
