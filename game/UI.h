@@ -1,3 +1,8 @@
+// UI Class
+// This class deals with initliasing UI objects for each game state
+// Also handles inputs and animaitons on UI elements
+// Details on implementation can be found in UI.cpp
+
 #ifndef UI_HEADER
 #define UI_HEADER
 

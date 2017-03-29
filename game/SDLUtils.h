@@ -1,3 +1,8 @@
+// SDL_Utils Header
+// This header file defines all global variables used accross the game, that each class needs access to at some point
+// This includes structs used by multiple classes and SDL things like the window and the renderer - although these
+// could/should be moved to Renderer.h
+
 #ifndef SDLUTILS_HEADER
 #define SDLUTILS_HEADER
 

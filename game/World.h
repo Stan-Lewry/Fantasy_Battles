@@ -1,4 +1,8 @@
-
+// World Class
+// This class primarlly handles the map and all associated functionality
+// at the core of this class is a 2d array of mapTiles
+// This class also deals with pathfinding and range finding functionality
+// Details of implemetation can be found in World.cpp
 
 #ifndef WORLD_HEADER
 #define WORLD_HEADER
@@ -53,28 +57,3 @@ private:
 
 #endif
 
-
-
-
-
-
-
-
-/*
-
-mapTile wall6;
-wall6.typeX = 6 * spriteSize;
-wall6.typeY = 1 * spriteSize;
-wall6.blocked = true;
-wall6.selected = false;
-wall6.moveRange = false;
-wall6.attackRange = false;
-
-wall6.screenX = (13 - 11) * tileSize / 2;
-wall6.screenY = (13 + 11) * tileSize / 4;
-wall6.worldX = 13;
-wall6.worldY = 11;
-map[11][13] = wall6;
-
-
-*/

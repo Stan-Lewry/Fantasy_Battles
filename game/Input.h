@@ -1,3 +1,9 @@
+// Input Class
+// This class abstracts the details of input handling from the Game class, collecting inputs in an InputState struct
+// which is processed by the game on each frame.
+// This abstraction allows an AI to pass inputs to the Game without changing anything in the Game class.
+// Details on implementation can be found in Input.cpp
+
 #ifndef INPUT_HEADER
 #define INPUT_HEADER
 

@@ -1,19 +1,18 @@
 #include "UI.h"
 
+// UI::UI()
+// constructor - apparently this does nothing
 UI::UI(){
 	//initElements();
 }
 
 
-
+// void UI::initGameplayElements()
+// This functions initialises all the ui elements required for ui during gameplay
 void UI::initGameplayElements(){
 	
 	UIElement mainWindow = { 0, 0, 300, 720, 0, 0, A };
 	elements[0] = mainWindow;
-
-	//UIElement profIcon = { 100, 300, 32, 32, 364, false, NO_ACTION };
-	
-	//UIElement HPIcon = { 100, 364, 32, 32, 396, false, NO_ACTION };
 
 	UIElement profIcon = { 50, 220, 32, 32, 524,0, false, NO_ACTION };
 	elements[1] = profIcon;
@@ -36,11 +35,9 @@ void UI::initGameplayElements(){
 	
 }
 
+// void UI::initMainMenuElements(){
+// initlialises the ui elements for the main menu
 void UI::initMainMenuElements(){
-	/*
-	UIElement playButton = { screenW - 300 - 64, 200, 300, 64, 332, 0, CHANGESTATE_GAMEPLAY };
-	elements[0] = playButton;
-	*/
 
 	UIElement play = { screenW - 364, 200, 300, 64, 0, 0, false, CHANGESTATE_GAMEPLAY };
 	elements[0] = play;
@@ -55,10 +52,14 @@ void UI::initMainMenuElements(){
 	elements[3] = exit;
 }
 
+// UIElement* UI::getElementList()
+// Returns the vector of UI elements as it currently is
 UIElement* UI::getElementList(){
 	return elements;
 }
 
+// UIAction UI::getAction(int mouseX, int mouseY)
+// checks if the mouse coords are within a ui elements and returns the assiciated UIAction
 UIAction UI::getAction(int mouseX, int mouseY){
 	for (int i = 0; i < 6; i++){
 		if (mouseX >= elements[i].screenX && mouseX < elements[i].screenX + elements[i].width){
@@ -70,6 +71,8 @@ UIAction UI::getAction(int mouseX, int mouseY){
 	return NO_ACTION;
 }
 
+// void UI::hover(int mouseX, int mouseY)
+// toggles a ui elements hover bool if the mouse coords are within a button 
 void UI::hover(int mouseX, int mouseY){
 	for (int i = 0; i <6; i++){
 		if (mouseX >= elements[i].screenX && mouseX < elements[i].screenX + elements[i].width){

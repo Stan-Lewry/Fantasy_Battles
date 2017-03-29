@@ -1,3 +1,9 @@
+// Character Class
+// This class defines the data and associated behaviours for characters in the game
+// characters consist of a set of coordinates (for world positions and screen positions),
+// the positions of the sprite in the sprite sheet + aniamtion frame, varius stats for combat etc
+// Details of implementation can be found in Character.cpp
+
 #ifndef CHARACTER_HEADER
 #define CHARACTER_HEADER
 #include <iostream>

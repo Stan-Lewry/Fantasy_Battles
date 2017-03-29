@@ -1,3 +1,10 @@
+// Game Class
+// This class defines the core functionality of the game and game logic, acting as a "god class" overseeing all other
+// components of the game and calling their functions when needed. As such a Game contains instances of each class in the game
+// At the core of this class is the game loop, which specifies functionality based on the current game state
+// game loop processes inputs, updates the game, and finally passes everything to the renderer to draw the frame
+// Details on the implementation of each funciton can be found in Game.cpp
+
 #ifndef GAME_HEADER
 #define GAME_HEADER
 

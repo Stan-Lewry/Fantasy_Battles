@@ -4,6 +4,8 @@ Input::Input(){
 	inputState = { false, 0, 0, false, false, false, false, false, false};
 }
 
+// void Input::handleEvents()
+// checks inputs and dumps them into the inputState struct
 void Input::handleEvents(){
 	inputState = { false, 0, 0, false, false, false, false, false, false };
 
@@ -45,6 +47,8 @@ void Input::handleEvents(){
 	}
 }
 
+// InputState Input::getCurrentInputState()
+// returns the inputState
 InputState Input::getCurrentInputState(){
 	return inputState;
 }

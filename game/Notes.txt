@@ -2,10 +2,10 @@ todo:
 	- animation along path	DONE
 	- fix mouse collision on characters	DONE
 	- make selection more obvious DONE
-	- tidy up get path function	??
-	- foreground layer ??
+	- tidy up get path function	DONE
+	- foreground layer DONE
 	- fix rendering of status bars	DONE
 	- finish commenting all code 
-	- draw new tiles
-	- fix drawing tiles beneath tall tiles
+	- draw new tiles DONEish
+	- fix drawing tiles beneath tall tiles DONE
 	- write new editor DONE

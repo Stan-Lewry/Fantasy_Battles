@@ -1,12 +1,15 @@
-
-
 #include "World.h"
 
+
+// mapTile* World::getMap()
+// returns the entire map
 mapTile* World::getMap(){
 	return *map;
 
 }
 
+// void World::initBlankMap()
+// initialises a blank map - currently not used anyware
 void World::initBlankMap(){
 	mapTile grass;
 	grass.typeX = 1 * spriteSize;
@@ -27,12 +30,24 @@ void World::initBlankMap(){
 	}
 }
 
+// void World::setIsoScreenCoords(int x, int y)
+// takes a world x and y coords and sets the calculates new values for the tiles screen coords used for the isometric projection
+// currently not used anyware
 void World::setIsoScreenCoords(int x, int y){
 	map[y][x].screenX = (x - y) * tileSize / 2;
 	map[y][x].screenY = (x + y) * tileSize / 4;
 }
 
-
+// void World::loadMap(char* path)
+// Takes a path to a map
+// initialises the map and auxiliary values by reading the input file line by line
+// current format for .level file is:
+// Line 0 											- Map Width
+// Line 1 											- Map Height
+// Lines 2 to 4 									- background R, G, B respectivly - currently ignored
+// Lines 5 to 14 									- Spawner coords for blue team spawners (in format x then y (world space coords))
+// Lines 15 to 24 									- Spawner coords for red team spawners (in format x then y (world space coords))
+// Lines 24 to 24 + (screenWidth * screenHeight)	- Tile info for each tile in the world
 void World::loadMap(char* path){
 	std::string line;
 	std::fstream levelFile(path);
@@ -99,49 +114,9 @@ void World::loadMap(char* path){
 	}
 	levelFile.close();
 }
-/*
-void World::loadMap(char* path){
 
-	mapWidth = 15;
-	mapHeight = 15;
-
-	std::string line;
-	std::fstream levelFile(path);
-
-	for(int i = 0; i < mapWidth * mapHeight; i++){
-		mapTile newTile;
-
-		std::getline(levelFile, line);
-		newTile.worldX = std::stoi(line);
-		std::getline(levelFile, line);
-		newTile.worldY = std::stoi(line);
-		std::getline(levelFile, line);
-		newTile.worldZ = std::stoi(line);
-
-		newTile.screenX = (newTile.worldX - newTile.worldY) * tileSize / 2;
-		newTile.screenY = (newTile.worldX + newTile.worldY) * tileSize / 4;
-
-		std::getline(levelFile, line);
-		newTile.typeX = std::stoi(line) * spriteSize;
-		std::getline(levelFile, line);
-		newTile.typeY = std::stoi(line) * spriteSize;
-
-		std::getline(levelFile, line);
-		if(line == "1") newTile.blocked = true;
-		else newTile.blocked = false;
-
-		newTile.selected = false;
-		newTile.moveRange = false;
-		newTile.exists = true;
-		newTile.occupiedF = false;
-		newTile.occupiedE = false;
-
-		map[newTile.worldY][newTile.worldX] = newTile;
-	}
-	levelFile.close();
-}
-*/
-
+// bool World::isTraversable(int x, int y)
+// checks if the tile at x and y is blocked or not
 bool World::isTraversable(int x, int y){
 	if (x >= 0){
 		if (x < mapWidth){
@@ -161,6 +136,10 @@ bool World::isTraversable(int x, int y){
 	else return false;
 }
 
+// void World::checkMovementRange(int moveDist, int originX, int originY)
+// runs a breadth first search across the map from the origin point to the move distance
+// this uncovers tiles that are moveable from the origin point
+// toggles the moveRange boold for all traversable tiles discovered
 void World::checkMovementRange(int moveDist, int originX, int originY){
 	std::vector<mapTile> listA;
 	std::vector<mapTile> listB;
@@ -213,6 +192,8 @@ void World::checkMovementRange(int moveDist, int originX, int originY){
 	map[originY][originX].moveRange = false;
 }
 
+// void World::checkAttackRange(int attackDist, int originX, int originY)
+// Sames checkMovementRange except for a characters attack range (Breadth first search)
 void World::checkAttackRange(int attackDist, int originX, int originY){
 	std::vector<mapTile> listA;
 	std::vector<mapTile> listB;
@@ -258,8 +239,14 @@ void World::checkAttackRange(int attackDist, int originX, int originY){
 	map[originY][originX].attackRange = false;
 }
 
-//Look into splitting this up into several smaller function
-
+// std::vector<Point> World::getPath(int originX, int originY, int destX, int destY, int moveDist)
+// Takes and origin x and y, and a destination x and y, and a movement range
+// This funciton is a modified breadth first search with early exits
+// This function finds the best path from the origin to the destination within the movement range
+// The function returns an array of Points (x,y pairs) 
+// The function constructs Nodes from tiles in the map. Each node has an x,y and the index of the node in the closed/ visited set that it was discovered from
+// At the end of the function the closed set is recursed through using each nodes found from index and the vector of Points is constructed and returned
+// in another life i would like to replace this with an implementation of A*
 std::vector<Point> World::getPath(int originX, int originY, int destX, int destY, int moveDist){
 	std::vector<Node> frontier;
 	std::vector<Node> newFrontier;
@@ -361,10 +348,13 @@ std::vector<Point> World::getPath(int originX, int originY, int destX, int destY
 	return path;
 }
 
-
+// mapTile World::getTile(int clickX, int clickY, int renderOffsetX, int renderOffsetY)
+// takes mouse x,y and render offset x,y to test if the input falls within a map tile
+// needs render offset values because position onscree != tiles screen coords always
+// Because of the way the isometric projection works a small rectangular hitbox is constructed in the center of each tile
+// this prevents tile hitboxes from overlapping, but the smaller (than they appear on screen) hitboxes make mouse input a tad fiddly
+// this should probably run front to back instead of back to front to accomodate different heights
 mapTile World::getTile(int clickX, int clickY, int renderOffsetX, int renderOffsetY){
-
-
 	for (int i = 0; i < mapHeight; i++){
 		for (int j = 0; j < mapWidth; j++){
 			//map[i][j].selected = false;
@@ -383,21 +373,25 @@ mapTile World::getTile(int clickX, int clickY, int renderOffsetX, int renderOffs
 			}
 		}
 	}
-	
 	mapTile nullTile;
 	nullTile.exists = false;
 	return nullTile;
-
 }
 
+// mapTile World::getTileWorldCoords(int worldX, int worldY)
+// returns the map tile at the given world coords
 mapTile World::getTileWorldCoords(int worldX, int worldY){
 	return map[worldY][worldX];
 }
 
+// void World::selectTile(int worldX, int worldY)
+// toggles the select bool of a given tile
 void World::selectTile(int worldX, int worldY){
 	map[worldY][worldX].selected = true;
 }
 
+// void World::clearAll()
+// sets all of the helper bools for each tile to false
 void World::clearAll(){
 	for (int i = 0; i < mapHeight; i++){
 		for (int j = 0; j < mapWidth; j++){
@@ -410,7 +404,8 @@ void World::clearAll(){
 	}
 }
 
-
+// void World::setOccupiedTiles(Character* friendlyCharacters[teamSize], Character* enemyCharacters[teamSize])
+// specifies the tiles occupied by each character in the lists - this info is used for renderer/preventing characters from entering eachothers tiles
 void World::setOccupiedTiles(Character* friendlyCharacters[teamSize], Character* enemyCharacters[teamSize]){
 	for(int i = 0; i < teamSize; i++){
 		map[friendlyCharacters[i]->getWorldY()][friendlyCharacters[i]->getWorldX()].occupiedF = true;
@@ -420,18 +415,22 @@ void World::setOccupiedTiles(Character* friendlyCharacters[teamSize], Character*
 	}
 }
 
+// returns map width
 int World::getMapWidth(){
 	return mapWidth;
 }
 
+// returns mapheight
 int World::getMapHeight(){
 	return mapHeight;
 }
 
+// returns the list of blue spawners
 Point* World::getBlueSpawners(){
 	return blueSpawners;
 }
 
+// returns the list of red spawners
 Point* World::getRedSpawners(){
 	return redSpawners;
 }

@@ -1,11 +1,27 @@
 #include "Renderer.h"
 
+// Renderer::Renderer(SDL_Renderer* _rend)
+// constructor - sets the renderer and calls the init functions
 Renderer::Renderer(SDL_Renderer* _rend){
 	rend = _rend;
 	initTextures();
 	initFonts();
 }
 
+// void Renderer::renderGame(lots of parameters)
+// The main render function for gameplay. takes all renderable objects and auxiliary values and sends the to the various rendering functions
+// This also deals with the delta time
+// calls render function in painter-alg order
+// Current render order:
+//		1 - Render background
+//		2 - render all world tiles
+//		3 - render first character list 	
+//		4 - render second character list
+//		5 - render status bars for first character list
+//		6 - render status bars for second character list
+//		7 - render the UI on top of everything
+//		8 -	render the cursor on top of the ui
+//		9 - render animation objects (why is this happening last?)
 void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* renderableCharacters1[teamSize], Character* renderableCharacters2[teamSize], Character* currentCharacter, UIElement renderableUIElements[1], AnimationObject* animationObject, int mouseX, int mouseY){
 	
 	oldTime = currentTime;
@@ -14,7 +30,6 @@ void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, 
 
 	frames++;
 	timer += ftime;
-
 	
 	SDL_RenderClear(rend);
 	renderMapBackground();
@@ -26,18 +41,8 @@ void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, 
 	renderUI(renderableUIElements, currentCharacter);
 	renderCursor(mouseX, mouseY);
 	renderAnimationObjects(animationObject);
-	//renderMapForeground();
-	//renderText("CUM", font, 600, 600, 255, 0, 0);
 
 	if (timer > 1){
-
-		//std::stringstream sStream;
-		//stream << frames;
-		//printf("frame > 1\n");
-		//std::string fString = std::to_string(frames);
-		//const char* fChar = fString.c_str();
-		//printf(fChar);
-		//renderText("CUM", font, 600, 600, 255, 0, 0);
 		printf("%iFPS\n", frames);
 		frames = 0;
 		timer = 0;
@@ -46,6 +51,10 @@ void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, 
 	SDL_RenderPresent(rend);
 }
 
+
+// void Renderer::renderWorld(lots of parameters)
+// itterates through the passed world rendering the appropriate sprites at the appropriate screen positions
+// renders back to front (painter style)
 void Renderer::renderWorld(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]){
 	SDL_Rect sRect = { 0, 0, worldSpriteSize, worldSpriteSize };
 	SDL_Rect dRect = { 0, 0, 256, 256 };
@@ -97,29 +106,13 @@ void Renderer::renderWorld(mapTile map[mapH][mapW], int mapWidth, int mapHeight,
 				sRect.x = 7 * worldSpriteSize;
 				SDL_RenderCopy(rend, worldSpriteSheet, &sRect, &dRect);
 			}
-
-			/*
-			for (int k = 0; k < teamSize; k++){
-				if (charList1[k]->getWorldX() == j && charList1[k]->getWorldY() == i){
-					SDL_Rect sRect = { charList1[k]->getAnimationFrame() * spriteSize, charList1[k]->getSpriteID() * spriteSize, spriteSize, spriteSize };
-					SDL_Rect dRect = { charList1[k]->getScreenX() + renderOffsetX, charList1[k]->getScreenY() - height + renderOffsetY, tileSize, tileSize };
-					SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
-					//	SUBTRACT HEIGHT VALUE FROM CHARACTER Y 
-				}
-				if (charList2[k]->getWorldX() == j && charList2[k]->getWorldY() == i){
-					SDL_Rect sRect = { charList2[k]->getAnimationFrame() * spriteSize, charList2[k]->getSpriteID() * spriteSize, spriteSize, spriteSize };
-					SDL_Rect dRect = { charList2[k]->getScreenX() + renderOffsetX, charList2[k]->getScreenY() - height + renderOffsetY, tileSize, tileSize };
-					SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
-					// SAME AS ABOVE
-				}
-			}
-			*/
 		}
 	}
 }
 
+// void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW][mapH], int mapWidth, int mapHeight)
+// renders a list of renderable characters at their screen positions
+// I have no idea why this takes a map and mapWidth / height values
 void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW][mapH], int mapWidth, int mapHeight){
 	for(int i = 0 ; i < teamSize; i++){
 		SDL_Rect sRect = {charList[i]->getAnimationFrame() * spriteSize, charList[i]->getSpriteID() * spriteSize, spriteSize, spriteSize};
@@ -128,13 +121,15 @@ void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW]
 	}
 }
 
+// void Renderer::renderStatusBars(Character* renderableCharacters[teamSize])
+// Renders the little health bars beneath each character in the passed list
+// Health bars are scaled based on each characters curren health
 void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 	//std::cout << "render characters called" << std::endl;
 	for (int i = 0; i < teamSize; i++){
 		SDL_Rect sRect = { renderableCharacters[i]->getAnimationFrame() * spriteSize, renderableCharacters[i]->getSpriteID() * spriteSize, spriteSize, spriteSize };
 		SDL_Rect dRect = { renderableCharacters[i]->getScreenX() + renderOffsetX, renderableCharacters[i]->getScreenY() + renderOffsetY - (renderableCharacters[i]->getWorldZ() * 32), tileSize, tileSize };
-		//SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
-
+		
 		sRect = { 364, 32, 27, 4 };
 		dRect.x = dRect.x + (tileSize / 2) - 14;
 		dRect.y += 76;
@@ -142,11 +137,13 @@ void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 		dRect.h = 4;
 
 		SDL_RenderCopy(rend, uiSpriteSheet, &sRect, &dRect);
-
-
 	}
 }
 
+// void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCharacter)
+// Renders the UI. Takes a list of UIElements to render and the currently selected character (to draw the little portrait in the UI
+// and the status info)
+// This function uses std::to_string a lot to render the characters status info as text
 void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCharacter){
 	
 	int uiX = 10;
@@ -195,19 +192,24 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 
 }
 
-
+// void Renderer::renderMapBackground()
+// Renders the map background. I want this function to take r,g,b values so that map background can be set in the editor
 void Renderer::renderMapBackground(){
 	SDL_Rect dRect = { 0, 0, screenW, screenH };
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 1);
 	SDL_RenderFillRect(rend, &dRect);
 }
 
+// void Renderer::renderMapForeground()
+// simple function for rendering a foreground layer on the map, currently just draws one big texture to the entire screen
 void Renderer::renderMapForeground(){
 	SDL_Rect sRect = {0, 0, 320, 180};
 	SDL_Rect dRect = {0, 0, screenW, screenH};
 	SDL_RenderCopy(rend, foreground, &sRect, &dRect);
 }
 
+// void Renderer::renderCursor(int mouseX, int mouseY)
+// renders the little cursor sprite at the mouse position on each frame
 void Renderer::renderCursor(int mouseX, int mouseY){
 	SDL_Rect sRect = { 300, 0, 64, 64 };
 	SDL_Rect dRect = { mouseX, mouseY, 32, 32 };
@@ -215,6 +217,11 @@ void Renderer::renderCursor(int mouseX, int mouseY){
 
 }
 
+// void Renderer::renderText(const char* text, TTF_Font* font, int x, int y, int r, int g, int b)
+// little function for rendering text. Takes a c-style string, a font, coords, and rgb values
+// sets up a dest rect at the given xy values - sets its width and height using TTF_SizeText
+// creates a texturer using the same technique as in loadPNG
+// draws the text to the screen
 void Renderer::renderText(const char* text, TTF_Font* font, int x, int y, int r, int g, int b){
 	SDL_Rect dest = { x, y, 0, 0 };
 	TTF_SizeText(font, text, &dest.w, &dest.h);	
@@ -226,19 +233,19 @@ void Renderer::renderText(const char* text, TTF_Font* font, int x, int y, int r,
 	SDL_DestroyTexture(texture);
 }
 
-
+// Renderer::renderAnimationObjects(AnimationObject* object)
+// itterates through the animations stack updating frame timers and changing animation frame
+// animations are rendered from the appropriate position in the animations sprite sheet
+// if an animation is complete it is removed from the aniationStack
 void Renderer::renderAnimationObjects(AnimationObject* object){
 
-	
-
 	if (animationStack.size() > 0){
+		
 		for (int i = 0; i < animationStack.size(); i++){
-
+			
 			if (animationStack.at(i).animType == DMG_NO){
 				
 				animationStack.at(i).frameTimer += ftime;
-
-
 
 				renderText(animationStack.at(i).text.c_str(), dmgFont, animationStack.at(i).screenX, animationStack.at(i).screenY, 255, 0, 0);
 
@@ -251,9 +258,6 @@ void Renderer::renderAnimationObjects(AnimationObject* object){
 				if (animationStack.at(i).animationFrame > animationStack.at(i).endFrame){
 					animationStack.erase(animationStack.begin() + i);
 				}
-				
-
-
 			}
 			else if (animationStack.at(i).animType == SWORD_ATTACK){
 		
@@ -332,6 +336,8 @@ void Renderer::renderAnimationObjects(AnimationObject* object){
 	}
 }
 
+// void Renderer::renderMainMenu(UIElement renderableUIElements[4], int mouseX, int mouseY)
+// Renders the main menu. This function takes mouse coords to deal with highlighting buttons -- is this right?
 void Renderer::renderMainMenu(UIElement renderableUIElements[4], int mouseX, int mouseY){
 	
 	SDL_RenderClear(rend);
@@ -357,7 +363,8 @@ void Renderer::renderMainMenu(UIElement renderableUIElements[4], int mouseX, int
 	SDL_RenderPresent(rend);
 }
 
-
+// SDL_Texture* Renderer::loadPNG(char path[])
+// loads a png at the specified path as a SDL_Texture 
 SDL_Texture* Renderer::loadPNG(char path[]){
 	printf("loading: %s\n", path);
 	SDL_Surface* tempSurface = IMG_Load(path);
@@ -367,8 +374,8 @@ SDL_Texture* Renderer::loadPNG(char path[]){
 	return texture;
 }
 
-
-
+// void Renderer::initTextures()
+// initialises all textures using LoadPNG
 void Renderer::initTextures(){
 	worldSpriteSheet = loadPNG("Assets/iso_tiles_large01.png");
 	characterSpriteSheet = loadPNG("Assets/characters05.png");
@@ -381,33 +388,43 @@ void Renderer::initTextures(){
 	foreground = loadPNG("Assets/foreground.png");
 }
 
-
+// void Renderer::initFonts(){
+// inits fonts using TTF_OpenFont
 void Renderer::initFonts(){
 	font = TTF_OpenFont("Fonts/half_bold_pixel.ttf", 28);
 	dmgFont = TTF_OpenFont("Fonts/half_bold_pixel.ttf", 18);
 }
 
+// returns the renderes x-axis offset
 int Renderer::getRenderOffsetX(){
 	return renderOffsetX;
 }
 
+// returns the y-axis offset
+// thes values are added tothe screen coords of every renderabe object at render time
+// this allows things to be moved about unbiformly (for example when scrolling the map)
 int Renderer::getRenderOffsetY(){
 	return renderOffsetY;
 }
 
+// sets new offsetX
 void Renderer::addOffsetX(int a){
 	renderOffsetX += a;
 }
 
+// sets new offset y
 void Renderer::addOffsetY(int a){
 	renderOffsetY += a;
 }
 
+// I cant remember what this variable is used for
 int Renderer::getMapSpaceOffset(){
 	return mapSpaceOffset;
 }
 
-
+// void Renderer::addAnimationObject(int screenX, int screenY, AnimationType animType, std::string text)
+// This function takes the basic parameters needed to construct animaiton objects
+// The use of this function obscures the details of animation objects from the rest of the program
 void Renderer::addAnimationObject(int screenX, int screenY, AnimationType animType, std::string text){
 
 	if (animType == DMG_NO){

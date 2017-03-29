@@ -1,3 +1,8 @@
+// Renderer Class
+// This class abstracts all rendering from the game class
+// Essentially just a wrapper around SDL_RenderCopy calls
+// Details on implemetation can be found in Renderer.cpp
+
 #ifndef RENDERER_HEADER
 #define RENDERER_HEADER
 
