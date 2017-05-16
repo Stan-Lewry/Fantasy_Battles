@@ -33,6 +33,7 @@ public:
 	void renderAnimationObjects(AnimationObject* object);
 
 	void renderMainMenu(UIElement renderableUIElements[1], int mouseX, int mouseY);
+	void renderStageSelect(UIElement renderableUIElements[4], int mouseX, int mouseY);
 
 	void initTextures();
 	void initFonts();
@@ -56,6 +57,8 @@ private:
 	SDL_Texture* uiSpriteSheet;
 	SDL_Texture* titleScreen;
 	SDL_Texture* mainMenuButtons;
+	SDL_Texture* stageSelectScreen;
+	SDL_Texture* stageSelectButtons;
 	SDL_Texture* swordAnimationSheet;
 	SDL_Texture* fireAnimationSheet;
 	SDL_Texture* attackAnimSheet = NULL;

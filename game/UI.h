@@ -15,6 +15,8 @@ public:
 
 	void initMainMenuElements();
 
+	void initStageSelectionElements();
+
 	UIElement* getElementList();
 
 	UIAction getAction(int mouseX, int mouseY);

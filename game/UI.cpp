@@ -39,7 +39,7 @@ void UI::initGameplayElements(){
 // initlialises the ui elements for the main menu
 void UI::initMainMenuElements(){
 
-	UIElement play = { screenW - 364, 500, 300, 64, 0, 0, false, CHANGESTATE_GAMEPLAY };
+	UIElement play = { screenW - 364, 500, 300, 64, 0, 0, false, CHANGESTATE_STAGESELECT };
 	elements[0] = play;
 
 	//UIElement editor = { screenW - 364, 328, 300, 64, 0, 64, false, NO_ACTION };
@@ -50,6 +50,26 @@ void UI::initMainMenuElements(){
 
 	UIElement exit = { screenW - 364, 584, 300, 64, 0, 192, false, QUIT };
 	elements[3] = exit;
+}
+
+void UI::initStageSelectionElements(){
+
+	//screenX, screenY, width, height, sourceX, sourceY, hover, function
+
+	std::cout << "initStageSelectionElements" << std::endl;
+
+	UIElement castle = {700, 216, 240, 80, 0, 0, false, LOADLEVEL_CASTLE};
+	
+	UIElement planes = {270, 450, 240, 80, 0, 80, false, LOADLEVEL_PLANES};
+
+	UIElement arena = {760, 446, 240, 80, 0, 160, false, LOADLEVEL_ARENA};
+
+	UIElement bridge = {370, 174, 240, 80, 0, 240, false, LOADLEVEL_BRIDGE};
+
+	elements[0] = castle;
+	elements[1] = planes;
+	elements[2] = arena;
+	elements[3] = bridge;
 }
 
 // UIElement* UI::getElementList()

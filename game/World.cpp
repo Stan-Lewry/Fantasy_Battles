@@ -104,6 +104,8 @@ void World::loadMap(char* path){
 		if(line == "1") newTile.blocked = true;
 		else newTile.blocked = false;
 
+		if(newTile.typeX == 0 && newTile.typeY == 0) newTile.blocked = true;
+
 		newTile.selected = false;
 		newTile.moveRange = false;
 		newTile.exists = true;

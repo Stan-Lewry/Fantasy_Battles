@@ -375,6 +375,33 @@ void Renderer::renderMainMenu(UIElement renderableUIElements[4], int mouseX, int
 	SDL_RenderPresent(rend);
 }
 
+void Renderer::renderStageSelect(UIElement renderableUIElements[4], int mouseX, int mouseY){
+
+	SDL_RenderClear(rend);
+
+	SDL_Rect bgSource = {0, 0, screenW, screenH};
+	SDL_Rect bgDest = {0,0, screenW, screenH};
+	SDL_RenderCopy(rend, stageSelectScreen, &bgSource, &bgDest);
+
+	SDL_Rect sRect, dRect;
+	for(int i = 0; i < 4; i++){
+		if(renderableUIElements[i].hover){
+			sRect = {renderableUIElements[i].sourceX + 240, renderableUIElements[i].sourceY, renderableUIElements[i].width, renderableUIElements[i].height};
+		}
+		else{
+			sRect = {renderableUIElements[i].sourceX, renderableUIElements[i].sourceY, renderableUIElements[i].width, renderableUIElements[i].height};
+			
+		}
+		dRect = {renderableUIElements[i].screenX, renderableUIElements[i].screenY, renderableUIElements[i].width, renderableUIElements[i].height};
+		SDL_RenderCopy(rend, stageSelectButtons, &sRect, &dRect);
+	}
+
+	renderCursor(mouseX, mouseY);
+
+	SDL_RenderPresent(rend);
+}
+
+
 // SDL_Texture* Renderer::loadPNG(char path[])
 // loads a png at the specified path as a SDL_Texture 
 SDL_Texture* Renderer::loadPNG(char path[]){
@@ -394,6 +421,8 @@ void Renderer::initTextures(){
 	uiSpriteSheet = loadPNG("Assets/ui.png");
 	titleScreen = loadPNG("Assets/title_screen.png");
 	mainMenuButtons = loadPNG("Assets/main_menu_buttons.png");
+	stageSelectScreen = loadPNG("Assets/select_stage_screen.png");
+	stageSelectButtons = loadPNG("Assets/select_stage_buttons.png");
 	swordAnimationSheet = loadPNG("Assets/sword_anim.png");
 	fireAnimationSheet = loadPNG("Assets/fire_anim.png");
 	attackAnimSheet = loadPNG("Assets/animation_sheet.png");

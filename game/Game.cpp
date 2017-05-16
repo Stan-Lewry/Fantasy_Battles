@@ -11,14 +11,22 @@ Game::Game(){
 	world = new World();
 	//world->initBlankMap();
 	//world->initMap();
-	world->loadMap("Levels/arena.level");
+	//world->loadMap("Levels/arena.level");
 	renderer = new Renderer(sdlUtils->rend);
 	ui = new UI();
 	ui->initMainMenuElements();
+	//initCharacters();
+	//selectedFriendlyCharacter = NULL;
+	//selectedTargetCharacter = NULL;
+	testAnimation = new AnimationObject{ 0, 0, 32, 32, 0, 3, DMG_NO, true, 0.1, 0 };
+}
+
+void Game::initGame(char* levelName){
+
+	world->loadMap(levelName);
 	initCharacters();
 	selectedFriendlyCharacter = NULL;
 	selectedTargetCharacter = NULL;
-	testAnimation = new AnimationObject{ 0, 0, 32, 32, 0, 3, DMG_NO, true, 0.1, 0 };
 }
 
 // Game::initCharacters() 
@@ -213,6 +221,7 @@ void Game::processInputs(InputState inputState){
 	switch(currentState){
 		case MAINMENU: processInputsMainMenu(inputState); break;
 		case GAMEPLAY: processInputsGameplay(inputState); break;
+		case STAGESELECT: processInputsStageSelect(inputState); break;
 		default: break;
 	}
 }
@@ -311,20 +320,66 @@ void Game::processInputsGameplay(InputState inputState){
 // void Game::processInputsMainMenu(InputState inputState)
 // proceses inputs for the main manu
 void Game::processInputsMainMenu(InputState inputState){
-	ui->hover(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
+	ui->hover(inputState.mouseX, inputState.mouseY);
 
-		if (input->getCurrentInputState().mouseButtonDown){
-			if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == CHANGESTATE_GAMEPLAY){
-				changeState(GAMEPLAY);
-			}
-			else if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == CHANGESTATE_STAGESELECT){
-				changeState(STAGESELECT);
-			}
-			else if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == QUIT){
-				globalRunning = false;
-			}
+	if(inputState.quit){
+		globalRunning = false;
+	}
+	if (input->getCurrentInputState().mouseButtonDown){
+		if (ui->getAction(inputState.mouseX, inputState.mouseY) == CHANGESTATE_GAMEPLAY){
+			changeState(GAMEPLAY);
 		}
+		else if (ui->getAction(inputState.mouseX, inputState.mouseY) == CHANGESTATE_STAGESELECT){
+			changeState(STAGESELECT);
+		}
+		else if (ui->getAction(inputState.mouseX, inputState.mouseY) == QUIT){
+			globalRunning = false;
+		}
+	}
+}
 
+void Game::processInputsStageSelect(InputState inputState){
+	ui->hover(inputState.mouseX, inputState.mouseY);
+
+	if(inputState.quit){
+		globalRunning = false;
+	}
+	if(inputState.mouseButtonDown){
+		switch (ui->getAction(inputState.mouseX, inputState.mouseY)){
+			case LOADLEVEL_CASTLE:
+				initGame("Levels/castle.level");
+				changeState(GAMEPLAY);
+				break;
+			case LOADLEVEL_PLANES:
+				initGame("Levels/plane.level");
+				changeState(GAMEPLAY);
+				break;
+			case LOADLEVEL_ARENA:
+				initGame("Levels/arena.level");
+				changeState(GAMEPLAY);
+				break;
+			case LOADLEVEL_BRIDGE:
+				initGame("Levels/bridge.level");
+				changeState(GAMEPLAY);
+				break;
+			default:
+				break;
+		}
+	}
+
+	/*
+	if(inputState.mouseButtonDown){
+		if(ui->getAction(inputState.mouseX, inputState.mouseY) == CLOADLEVEL_CASTLE){
+			initGame("castle");
+			changeState(GAMEPLAY);
+		}
+		else if(ui->getAction(inputState.mouseX, inputState.mouseY) == LOADLEVEL_PLANES){
+			initGame("planes");
+			changeState(GAMEPLAY);
+		}
+		else if(ui-)
+	}
+	*/
 }
 
 // void Game::update()
@@ -344,8 +399,8 @@ void Game::changeState(GameState newState){
 	}
 	if(newState == STAGESELECT)
 	{
-		ui->initGameplayElements();
-		currentState = GAMEPLAY;
+		ui->initStageSelectionElements();
+		currentState = STAGESELECT;
 	}
 	else if (newState == MAINMENU){
 		//do the shit when needed;
@@ -381,7 +436,7 @@ void Game::gameLoop(){
 			renderer->renderGame(world->map, world->getMapWidth(), world->getMapHeight(), activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
 		}
 		if(currentState == STAGESELECT){
-
+			renderer->renderStageSelect(ui->getElementList(), input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
 		}
 		else if (currentState == MAINMENU){
 			renderer->renderMainMenu(ui->getElementList(), input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);

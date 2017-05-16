@@ -22,6 +22,7 @@ class Game{
 public:
 	Game();
 
+	void initGame(char* levelName);
 	
 	void initCharacters();
 	bool selectFriendlyCharacter(int mouseX, int mouseY);
@@ -34,6 +35,7 @@ public:
 	void processInputs(InputState inputState);
 	void processInputsGameplay(InputState inputState);
 	void processInputsMainMenu(InputState inputState);
+	void processInputsStageSelect(InputState inputState);
 
 	void doCombat(Character* friendly, Character* target);
 	void update();
