@@ -39,14 +39,14 @@ void UI::initGameplayElements(){
 // initlialises the ui elements for the main menu
 void UI::initMainMenuElements(){
 
-	UIElement play = { screenW - 364, 200, 300, 64, 0, 0, false, CHANGESTATE_GAMEPLAY };
+	UIElement play = { screenW - 364, 500, 300, 64, 0, 0, false, CHANGESTATE_GAMEPLAY };
 	elements[0] = play;
 
-	UIElement editor = { screenW - 364, 328, 300, 64, 0, 64, false, NO_ACTION };
-	elements[1] = editor;
+	//UIElement editor = { screenW - 364, 328, 300, 64, 0, 64, false, NO_ACTION };
+	//elements[1] = editor;
 
-	UIElement options = { screenW - 364, 465, 300, 64, 0, 128, false, NO_ACTION };
-	elements[2] = options;
+	//UIElement options = { screenW - 364, 465, 300, 64, 0, 128, false, NO_ACTION };
+	//elements[2] = options;
 
 	UIElement exit = { screenW - 364, 584, 300, 64, 0, 192, false, QUIT };
 	elements[3] = exit;

@@ -69,13 +69,14 @@ struct mapTile{
 	bool exists;
 	bool occupiedF;
 	bool occupiedE;
+	bool tall;
 	//bool rangedAttackRange
 };
 
 
 
-enum UIAction{NO_ACTION, A, B, C , CHANGESTATE_GAMEPLAY, QUIT};
-enum GameState{MAINMENU, LEVELSELECT, GAMEPLAY};
+enum UIAction{NO_ACTION, A, B, C , CHANGESTATE_GAMEPLAY, CHANGESTATE_STAGESELECT, QUIT};
+enum GameState{MAINMENU, STAGESELECT, GAMEPLAY};
 enum AnimationType{DMG_NO, SWORD_ATTACK, MAGIC_ATTACK, SPEAR_ATTACK, ARROW_ATTACK};
 //enum Direction{N, S, E, W};
 struct AnimationObject{

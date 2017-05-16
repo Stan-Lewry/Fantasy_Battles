@@ -11,7 +11,7 @@ Game::Game(){
 	world = new World();
 	//world->initBlankMap();
 	//world->initMap();
-	world->loadMap("Levels/newTestLevel02.level");
+	world->loadMap("Levels/arena.level");
 	renderer = new Renderer(sdlUtils->rend);
 	ui = new UI();
 	ui->initMainMenuElements();
@@ -249,30 +249,33 @@ void Game::processInputsGameplay(InputState inputState){
 	if(selectedFriendlyCharacter != NULL){
 		if(inputState.mouseButtonDown){
 			
-			if(selectFriendlyCharacter(inputState.mouseX, inputState.mouseY)){
-				//selecting a new friendly character
-			}
+			if(selectedFriendlyCharacter->isMoving == false){
 
-			else if(selectTargetCharacter(inputState.mouseX, inputState.mouseY)){
-				if(selectedFriendlyCharacter->getAttkPoints() > 0){
-					if(world->getTileWorldCoords(selectedTargetCharacter->getWorldX(), selectedTargetCharacter->getWorldY()).attackRange){
-						// do the combat
-						doCombat(selectedFriendlyCharacter, selectedTargetCharacter);
+				if(selectFriendlyCharacter(inputState.mouseX, inputState.mouseY)){
+					//selecting a new friendly character
+				}
+
+				else if(selectTargetCharacter(inputState.mouseX, inputState.mouseY)){
+					if(selectedFriendlyCharacter->getAttkPoints() > 0){
+						if(world->getTileWorldCoords(selectedTargetCharacter->getWorldX(), selectedTargetCharacter->getWorldY()).attackRange){
+							// do the combat
+							doCombat(selectedFriendlyCharacter, selectedTargetCharacter);
+						}
 					}
 				}
-			}
 			
-			else if(selectedFriendlyCharacter->getMovePoints() > 0){
-				mapTile clickedTile = world->getTile(inputState.mouseX, inputState.mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY());
-				if(clickedTile.exists && clickedTile.moveRange){
-					if(!characterInThatPosition(clickedTile.worldX, clickedTile.worldY)){
-						// get the path to that tile and assign it to our character
-						selectedFriendlyCharacter->assignPath(
-							world->getPath(
-								selectedFriendlyCharacter->getWorldX(), selectedFriendlyCharacter->getWorldY(),
-								clickedTile.worldX, clickedTile.worldY, selectedFriendlyCharacter->getMoveRange()));
-						selectedFriendlyCharacter->setMovePoints(-1);
-						world->clearAll();
+				else if(selectedFriendlyCharacter->getMovePoints() > 0){
+					mapTile clickedTile = world->getTile(inputState.mouseX, inputState.mouseY, renderer->getRenderOffsetX(), renderer->getRenderOffsetY());
+					if(clickedTile.exists && clickedTile.moveRange){
+						if(!characterInThatPosition(clickedTile.worldX, clickedTile.worldY)){
+							// get the path to that tile and assign it to our character
+							selectedFriendlyCharacter->assignPath(
+								world->getPath(
+									selectedFriendlyCharacter->getWorldX(), selectedFriendlyCharacter->getWorldY(),
+									clickedTile.worldX, clickedTile.worldY, selectedFriendlyCharacter->getMoveRange()));
+							selectedFriendlyCharacter->setMovePoints(-1);
+							world->clearAll();
+						}
 					}
 				}
 			}
@@ -284,22 +287,22 @@ void Game::processInputsGameplay(InputState inputState){
 	}
 
 	if(inputState.mouseX < 20){
-		if(renderer->getRenderOffsetX() < 1280){
+		if(renderer->getRenderOffsetX() < 2000){
 			renderer->addOffsetX(scrollSpeed);
 		}
 	}
 	if(inputState.mouseX > screenW - 20){
-		if(renderer->getRenderOffsetX() > 0){
+		if(renderer->getRenderOffsetX() > -700){
 			renderer->addOffsetX(-scrollSpeed);
 		}
 	}
 	if(inputState.mouseY < 20){
-		if(renderer->getRenderOffsetY() < 400){
+		if(renderer->getRenderOffsetY() < 2000){
 			renderer->addOffsetY(scrollSpeed);
 		}
 	}
 	if(inputState.mouseY > screenH - 20){
-		if(renderer->getRenderOffsetY() > -700){
+		if(renderer->getRenderOffsetY() > -2000){
 			renderer->addOffsetY(-scrollSpeed);
 		}
 	}  
@@ -313,6 +316,9 @@ void Game::processInputsMainMenu(InputState inputState){
 		if (input->getCurrentInputState().mouseButtonDown){
 			if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == CHANGESTATE_GAMEPLAY){
 				changeState(GAMEPLAY);
+			}
+			else if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == CHANGESTATE_STAGESELECT){
+				changeState(STAGESELECT);
 			}
 			else if (ui->getAction(input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY) == QUIT){
 				globalRunning = false;
@@ -336,6 +342,11 @@ void Game::changeState(GameState newState){
 		ui->initGameplayElements();
 		currentState = GAMEPLAY;
 	}
+	if(newState == STAGESELECT)
+	{
+		ui->initGameplayElements();
+		currentState = GAMEPLAY;
+	}
 	else if (newState == MAINMENU){
 		//do the shit when needed;
 	}
@@ -347,13 +358,30 @@ void Game::gameLoop(){
 
 
 	while (globalRunning){
-		
+		/*
+		if(currentState == MAINMENU){
+			input->handleEvents();
+		}
+		if(currentState == GAMEPLAY){
+			if(selectedFriendlyCharacter != NULL){
+				if(selectedFriendlyCharacter->isMoving == false){
+					input->handleEvents();
+				}
+			}
+			else{
+				input->handleEvents();
+			}
+		}
+		*/
 		input->handleEvents();
 		processInputs(input->getCurrentInputState());
 		update(); 
 		//renderMap();
 		if (currentState == GAMEPLAY){
 			renderer->renderGame(world->map, world->getMapWidth(), world->getMapHeight(), activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
+		}
+		if(currentState == STAGESELECT){
+
 		}
 		else if (currentState == MAINMENU){
 			renderer->renderMainMenu(ui->getElementList(), input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);

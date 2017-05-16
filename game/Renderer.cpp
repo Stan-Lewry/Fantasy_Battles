@@ -117,6 +117,18 @@ void Renderer::renderCharacters(Character* charList[teamSize], mapTile map[mapW]
 	for(int i = 0 ; i < teamSize; i++){
 		SDL_Rect sRect = {charList[i]->getAnimationFrame() * spriteSize, charList[i]->getSpriteID() * spriteSize, spriteSize, spriteSize};
 		SDL_Rect dRect = {charList[i]->getScreenX() + renderOffsetX, charList[i]->getScreenY() - (charList[i]->getWorldZ() * 32) + renderOffsetY, tileSize, tileSize};
+		//SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
+
+
+
+		if(charList[i]->getCurrentHP() > 0){
+			if(map[charList[i]->getWorldY() + 1][charList[i]->getWorldX() + 1].tall == true){
+				sRect.x = 3 * spriteSize;
+				//std::cout << "CHATRACTER IS BEGUND TALL THING" << std::endl;
+				//SDL_RenderCopy(rend, character)
+			}
+		}
+
 		SDL_RenderCopy(rend, characterSpriteSheet, &sRect, &dRect);
 	}
 }
@@ -378,7 +390,7 @@ SDL_Texture* Renderer::loadPNG(char path[]){
 // initialises all textures using LoadPNG
 void Renderer::initTextures(){
 	worldSpriteSheet = loadPNG("Assets/iso_tiles_large01.png");
-	characterSpriteSheet = loadPNG("Assets/characters05.png");
+	characterSpriteSheet = loadPNG("Assets/characters06.png");
 	uiSpriteSheet = loadPNG("Assets/ui.png");
 	titleScreen = loadPNG("Assets/title_screen.png");
 	mainMenuButtons = loadPNG("Assets/main_menu_buttons.png");

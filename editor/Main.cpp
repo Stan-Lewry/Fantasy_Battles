@@ -387,7 +387,7 @@ bool cycleTileZValue(int inputX, int inputY){
 //also include writing out a background colour
 void exportMap(){
 	std::ofstream levelFile;
-	levelFile.open("newTestLevel01.level");
+	levelFile.open("plane.level");
 
 	//First thing we want to do is write out the width and height of the map 
 	levelFile << mapWidth << "\n";							//Write the width of the map
@@ -417,8 +417,8 @@ void exportMap(){
 	//Now we write the world coords of these spawners to our file
 	//blue team first
 	for(int i = 0; i < 5; i++){
-		levelFile << blueSpawners[i].worldX << "\n";
-		levelFile << blueSpawners[i].worldY << "\n";
+		levelFile << blueSpawners[i].worldX << std::endl;
+		levelFile << blueSpawners[i].worldY << std::endl;
 	}
 	//then the red team
 	for(int i = 0; i < 5; i ++){

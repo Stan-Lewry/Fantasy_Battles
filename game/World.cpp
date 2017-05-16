@@ -110,6 +110,25 @@ void World::loadMap(char* path){
 		newTile.occupiedF = false;
 		newTile.occupiedE = false;
 
+		bool tall = false;
+		if(newTile.typeX == 8 * spriteSize && newTile.typeY == 0 * spriteSize) 	    tall = true;
+		else if(newTile.typeX == 9 * spriteSize && newTile.typeY == 0 * spriteSize) tall = true;
+		else if(newTile.typeX == 7 * spriteSize && newTile.typeY == 3 * spriteSize) tall = true;
+		else if(newTile.typeX == 8 * spriteSize && newTile.typeY == 3 * spriteSize) tall = true;
+		else if(newTile.typeX == 9 * spriteSize && newTile.typeY == 3 * spriteSize) tall = true;
+		else if(newTile.typeX == 0 * spriteSize && newTile.typeY == 4 * spriteSize) tall = true;
+		else if(newTile.typeX == 1 * spriteSize && newTile.typeY == 4 * spriteSize) tall = true;
+		else if(newTile.typeX == 2 * spriteSize && newTile.typeY == 4 * spriteSize) tall = true;
+		else if(newTile.typeX == 3 * spriteSize && newTile.typeY == 4 * spriteSize) tall = true;
+		else if(newTile.typeX == 4 * spriteSize && newTile.typeY == 4 * spriteSize) tall = true;
+		else if(newTile.typeX == 5 * spriteSize && newTile.typeY == 4 * spriteSize) tall = true;
+		
+		if(tall){
+			std::cout << "Tall tile found";
+		}
+
+		newTile.tall = tall;
+
 		map[newTile.worldY][newTile.worldX] = newTile;
 	}
 	levelFile.close();
