@@ -36,6 +36,7 @@ public:
 	void processInputsGameplay(InputState inputState);
 	void processInputsMainMenu(InputState inputState);
 	void processInputsStageSelect(InputState inputState);
+	void processInputsPauseMenu(InputState inputState);
 
 	void doCombat(Character* friendly, Character* target);
 	void update();
@@ -68,6 +69,7 @@ private:
 	AnimationObject* testAnimation;
 
 	bool globalRunning;
+	bool paused;
 	bool characterAnimating = false;
 
 	GameState currentState = MAINMENU;
@@ -79,6 +81,9 @@ private:
 	int tileSize = 64;
 
 	int scrollSpeed = 5;
+
+	char* currentTeam;
+	int turnNo;
 	
 };
 

@@ -39,6 +39,10 @@ void UI::initGameplayElements(){
 // initlialises the ui elements for the main menu
 void UI::initMainMenuElements(){
 
+	for(int i = 0; i < 6; i++){
+		elements[i] = {0,0,0,0,0,0,false, NO_ACTION};
+	}
+
 	UIElement play = { screenW - 364, 500, 300, 64, 0, 0, false, CHANGESTATE_STAGESELECT };
 	elements[0] = play;
 
@@ -72,12 +76,25 @@ void UI::initStageSelectionElements(){
 	elements[3] = bridge;
 }
 
+void UI::initPauseElements(){
+	UIElement resume = {440, 300, 400, 80, 0, 0, false, PAUSE_RESUME};
+	UIElement mainMenu = {440, 400, 400, 80, 0, 80, false, PAUSE_MAINMENU};
+	UIElement quitGame = {440, 500, 400, 80, 0, 160, false, PAUSE_QUITGAME};
+
+	pauseElements[0] = resume;
+	pauseElements[1] = mainMenu;
+	pauseElements[2] = quitGame;
+}
+
 // UIElement* UI::getElementList()
 // Returns the vector of UI elements as it currently is
 UIElement* UI::getElementList(){
 	return elements;
 }
 
+UIElement* UI::getPauseElementsList(){
+	return pauseElements;
+}
 // UIAction UI::getAction(int mouseX, int mouseY)
 // checks if the mouse coords are within a ui elements and returns the assiciated UIAction
 UIAction UI::getAction(int mouseX, int mouseY){
@@ -91,6 +108,16 @@ UIAction UI::getAction(int mouseX, int mouseY){
 	return NO_ACTION;
 }
 
+UIAction UI::getPauseAction(int mouseX, int mouseY){
+	for (int i = 0; i < 2; i++){
+		if (mouseX >= pauseElements[i].screenX && mouseX < pauseElements[i].screenX + pauseElements[i].width){
+			if (mouseY >= pauseElements[i].screenY && mouseY < pauseElements[i].screenY + pauseElements[i].height){
+				return pauseElements[i].action;
+			}
+		}
+	}
+	return NO_ACTION;
+}
 // void UI::hover(int mouseX, int mouseY)
 // toggles a ui elements hover bool if the mouse coords are within a button 
 void UI::hover(int mouseX, int mouseY){
@@ -105,4 +132,17 @@ void UI::hover(int mouseX, int mouseY){
 		}
 	}
 	
+}
+
+void UI::pauseHover(int mouseX, int mouseY){
+	for (int i = 0; i <3; i++){
+		if (mouseX >= pauseElements[i].screenX && mouseX < pauseElements[i].screenX + pauseElements[i].width){
+			if (mouseY >= pauseElements[i].screenY && mouseY < pauseElements[i].screenY + pauseElements[i].height){
+				for (int x = 0; x < 4; x++){
+					pauseElements[x].hover = false;
+				}
+				pauseElements[i].hover = true;
+			}
+		}
+	}	
 }

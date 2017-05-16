@@ -22,7 +22,7 @@ Renderer::Renderer(SDL_Renderer* _rend){
 //		7 - render the UI on top of everything
 //		8 -	render the cursor on top of the ui
 //		9 - render animation objects (why is this happening last?)
-void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* renderableCharacters1[teamSize], Character* renderableCharacters2[teamSize], Character* currentCharacter, UIElement renderableUIElements[1], AnimationObject* animationObject, int mouseX, int mouseY){
+void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* renderableCharacters1[teamSize], Character* renderableCharacters2[teamSize], Character* currentCharacter, UIElement renderableUIElements[1], AnimationObject* animationObject, int mouseX, int mouseY, bool paused, char* currentTeam, int turnNo){
 	
 	oldTime = currentTime;
 	currentTime = SDL_GetTicks();
@@ -38,7 +38,7 @@ void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, 
 	renderCharacters(renderableCharacters2, map, mapWidth, mapHeight);
 	renderStatusBars(renderableCharacters1);
 	renderStatusBars(renderableCharacters2);
-	renderUI(renderableUIElements, currentCharacter);
+	renderUI(renderableUIElements, currentCharacter, currentTeam, turnNo);
 	renderCursor(mouseX, mouseY);
 	renderAnimationObjects(animationObject);
 
@@ -48,7 +48,9 @@ void Renderer::renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, 
 		timer = 0;
 	}
 
-	SDL_RenderPresent(rend);
+	if(!paused){
+		SDL_RenderPresent(rend);
+	}
 }
 
 
@@ -156,7 +158,7 @@ void Renderer::renderStatusBars(Character* renderableCharacters[teamSize]){
 // Renders the UI. Takes a list of UIElements to render and the currently selected character (to draw the little portrait in the UI
 // and the status info)
 // This function uses std::to_string a lot to render the characters status info as text
-void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCharacter){
+void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCharacter, char* currentTeam, int turnNo){
 	
 	int uiX = 10;
 	int uiY = screenH - 225;	
@@ -202,6 +204,26 @@ void Renderer::renderUI(UIElement renderableUIElements[1], Character* currentCha
 		renderText(currentCharacter->getName(),font,  uiX + 190, uiY + 30, 255, 255, 255);
 	}
 
+	/*
+	if(currentTeam == blueTeam){
+		renderText(currentTeam, font, 20, 20, 0, 0, 255);
+	}
+	else if(currentTeam == redTeam){
+		renderText(currentTeam, font, screenW - 100, 20, 255, 0, 0);
+	}
+	*/
+
+	if(turnNo % 2 != 0){
+		renderText("BlueTeam", font, 20, 20, 0, 0, 255);
+	}
+	else{
+		renderText("Red Team", font, screenW - 200, 20, 255, 0, 0);
+	}
+
+	std::string stst = "Turn: ";
+	const char* turnNoString = stst.append(std::to_string(turnNo)).c_str();
+	renderText(turnNoString, font, 600, 20, 255, 255, 255);
+	renderText("press space to end your turn", font, 500, screenH - 30, 255, 0, 0);
 }
 
 // void Renderer::renderMapBackground()
@@ -401,6 +423,27 @@ void Renderer::renderStageSelect(UIElement renderableUIElements[4], int mouseX, 
 	SDL_RenderPresent(rend);
 }
 
+void Renderer::renderPauseMenu(UIElement renderableUIElements[3], int mouseX, int mouseY){
+	SDL_Rect bgSource = {0, 0, screenW, screenH};
+	SDL_Rect bgDest = {0, 0, screenW, screenH};
+	SDL_RenderCopy(rend, pauseScreen, &bgSource, &bgDest);
+
+	SDL_Rect sRect, dRect;
+	for(int i = 0; i < 3; i++){
+		if(renderableUIElements[i].hover){
+			sRect = {renderableUIElements[i].sourceX + 400, renderableUIElements[i].sourceY, renderableUIElements[i].width, renderableUIElements[i].height};
+		}
+		else{
+			sRect = {renderableUIElements[i].sourceX, renderableUIElements[i].sourceY, renderableUIElements[i].width, renderableUIElements[i].height};
+		}
+		dRect = {renderableUIElements[i].screenX, renderableUIElements[i].screenY, renderableUIElements[i].width, renderableUIElements[i].height};
+		SDL_RenderCopy(rend, pauseButtons, &sRect, &dRect);
+	}
+
+	renderCursor(mouseX, mouseY);
+	SDL_RenderPresent(rend);
+
+}
 
 // SDL_Texture* Renderer::loadPNG(char path[])
 // loads a png at the specified path as a SDL_Texture 
@@ -423,6 +466,8 @@ void Renderer::initTextures(){
 	mainMenuButtons = loadPNG("Assets/main_menu_buttons.png");
 	stageSelectScreen = loadPNG("Assets/select_stage_screen.png");
 	stageSelectButtons = loadPNG("Assets/select_stage_buttons.png");
+	pauseScreen = loadPNG("Assets/pause_screen.png");
+	pauseButtons = loadPNG("Assets/pause_buttons.png");
 	swordAnimationSheet = loadPNG("Assets/sword_anim.png");
 	fireAnimationSheet = loadPNG("Assets/fire_anim.png");
 	attackAnimSheet = loadPNG("Assets/animation_sheet.png");

@@ -20,17 +20,19 @@ public:
 
 	void renderGame(mapTile map[mapH][mapW], int mapWidth, int mapHeight, Character* renderableCharacters1[teamSize], 
 		Character* renderableCharacters2[teamSize], Character* currentCharacter, 
-		UIElement renderableUIElements[1], AnimationObject* animationObject, int mousex, int mouseY);
+		UIElement renderableUIElements[1], AnimationObject* animationObject, int mousex, int mouseY, bool paused,
+		char* currentTeam, int turnNo);
 
 	void renderCharacters(Character* renderableCharacters[teamSize], mapTile map[mapW][mapH], int mapWidth, int mapHeight);
 	void renderStatusBars(Character* renderableCharacters[teamSize]);
-	void renderUI(UIElement renderableUIElements[1], Character* currentCharacter);
+	void renderUI(UIElement renderableUIElements[1], Character* currentCharacter, char* currentTeam, int turnNo);
 	void renderWorld(mapTile map[mapH][mapW],int mapWidth, int mapHeight, Character* currentCharacter, Character* charList1[teamSize], Character* charList2[teamSize]);
 	void renderMapBackground();
 	void renderMapForeground();
 	void renderCursor(int mouseX, int mouseY);
 	void renderText(const char* text, TTF_Font* font, int x, int y, int r, int g, int b);
 	void renderAnimationObjects(AnimationObject* object);
+	void renderPauseMenu(UIElement renderableUIElements[4], int mouseX, int mouseY);
 
 	void renderMainMenu(UIElement renderableUIElements[1], int mouseX, int mouseY);
 	void renderStageSelect(UIElement renderableUIElements[4], int mouseX, int mouseY);
@@ -59,6 +61,8 @@ private:
 	SDL_Texture* mainMenuButtons;
 	SDL_Texture* stageSelectScreen;
 	SDL_Texture* stageSelectButtons;
+	SDL_Texture* pauseScreen;
+	SDL_Texture* pauseButtons;
 	SDL_Texture* swordAnimationSheet;
 	SDL_Texture* fireAnimationSheet;
 	SDL_Texture* attackAnimSheet = NULL;
@@ -83,6 +87,10 @@ private:
 	int frames;
 
 	std::vector<AnimationObject> animationStack;
+
+	char* blueTeam = "Blue Team";
+	char* redTeam = "Red Team";
+
 };
 
 #endif

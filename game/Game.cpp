@@ -8,6 +8,7 @@ Game::Game(){
 	sdlUtils = new SDLUtils();
 	input = new Input();
 	globalRunning = sdlUtils->initSDL();
+	paused = false;
 	world = new World();
 	//world->initBlankMap();
 	//world->initMap();
@@ -15,10 +16,13 @@ Game::Game(){
 	renderer = new Renderer(sdlUtils->rend);
 	ui = new UI();
 	ui->initMainMenuElements();
+	ui->initPauseElements();
 	//initCharacters();
 	//selectedFriendlyCharacter = NULL;
 	//selectedTargetCharacter = NULL;
-	testAnimation = new AnimationObject{ 0, 0, 32, 32, 0, 3, DMG_NO, true, 0.1, 0 };
+	//testAnimation = new AnimationObject{ 0, 0, 32, 32, 0, 3, DMG_NO, true, 0.1, 0 };
+	currentTeam = "Blue Team";
+	turnNo = 1;
 }
 
 void Game::initGame(char* levelName){
@@ -96,6 +100,15 @@ void Game::endTurn(){
 		activeCharacterList[i]->reset();
 		inactiveCharacterList[i]->reset();
 	}
+
+	if(currentTeam == "Blue Team"){
+		currentTeam = "Red Team";
+	}
+	else{
+		currentTeam = "Blue Team";
+	}
+	turnNo++;
+
 	switchCharacterLists();
 	selectedFriendlyCharacter = NULL;
 	selectedTargetCharacter = NULL;
@@ -219,8 +232,17 @@ bool Game::characterInThatPosition(int worldX, int worldY){
 // This function should processes generic inputs (those aplicable for all gameplayStates) such as quit
 void Game::processInputs(InputState inputState){
 	switch(currentState){
-		case MAINMENU: processInputsMainMenu(inputState); break;
-		case GAMEPLAY: processInputsGameplay(inputState); break;
+		case MAINMENU: 	
+			processInputsMainMenu(inputState); 
+			break;
+		case GAMEPLAY: 
+			if(paused){
+				processInputsPauseMenu(inputState);
+			}
+			else{
+				processInputsGameplay(inputState);
+			}
+			break;
 		case STAGESELECT: processInputsStageSelect(inputState); break;
 		default: break;
 	}
@@ -265,7 +287,7 @@ void Game::processInputsGameplay(InputState inputState){
 				}
 
 				else if(selectTargetCharacter(inputState.mouseX, inputState.mouseY)){
-					if(selectedFriendlyCharacter->getAttkPoints() > 0){
+					if(selectedFriendlyCharacter->getAttkPoints() > 0 && selectedTargetCharacter->getCurrentHP() > 0){
 						if(world->getTileWorldCoords(selectedTargetCharacter->getWorldX(), selectedTargetCharacter->getWorldY()).attackRange){
 							// do the combat
 							doCombat(selectedFriendlyCharacter, selectedTargetCharacter);
@@ -289,6 +311,10 @@ void Game::processInputsGameplay(InputState inputState){
 				}
 			}
 		}
+	}
+
+	if(inputState.esc){
+		paused = true;
 	}
 
 	if (inputState.space){
@@ -334,6 +360,30 @@ void Game::processInputsMainMenu(InputState inputState){
 		}
 		else if (ui->getAction(inputState.mouseX, inputState.mouseY) == QUIT){
 			globalRunning = false;
+		}
+	}
+}
+
+void Game::processInputsPauseMenu(InputState inputState){
+	ui->pauseHover(inputState.mouseX, inputState.mouseY);
+	if(inputState.quit){
+		globalRunning = false;
+	}
+	if(inputState.mouseButtonDown){
+		switch(ui->getPauseAction(inputState.mouseX, inputState.mouseY)){
+			case PAUSE_RESUME:
+				paused = false;
+				break;
+			case PAUSE_MAINMENU:
+				paused = false;
+				changeState(MAINMENU);
+				break;
+			case PAUSE_QUITGAME:
+				paused = false;
+				globalRunning = false;
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -404,6 +454,8 @@ void Game::changeState(GameState newState){
 	}
 	else if (newState == MAINMENU){
 		//do the shit when needed;
+		ui->initMainMenuElements();
+		currentState = MAINMENU;
 	}
 }
 
@@ -433,7 +485,10 @@ void Game::gameLoop(){
 		update(); 
 		//renderMap();
 		if (currentState == GAMEPLAY){
-			renderer->renderGame(world->map, world->getMapWidth(), world->getMapHeight(), activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
+			renderer->renderGame(world->map, world->getMapWidth(), world->getMapHeight(), activeCharacterList, inactiveCharacterList, selectedFriendlyCharacter, ui->getElementList(),testAnimation, input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY, paused, currentTeam, turnNo);
+			if(paused){
+				renderer->renderPauseMenu(ui->getPauseElementsList(), input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);
+			}
 		}
 		if(currentState == STAGESELECT){
 			renderer->renderStageSelect(ui->getElementList(), input->getCurrentInputState().mouseX, input->getCurrentInputState().mouseY);

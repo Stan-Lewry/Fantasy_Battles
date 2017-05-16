@@ -1,13 +1,13 @@
 #include "Input.h"
 
 Input::Input(){
-	inputState = { false, 0, 0, false, false, false, false, false, false};
+	inputState = { false, 0, 0, false, false, false, false, false, false, false};
 }
 
 // void Input::handleEvents()
 // checks inputs and dumps them into the inputState struct
 void Input::handleEvents(){
-	inputState = { false, 0, 0, false, false, false, false, false, false };
+	inputState = { false, 0, 0, false, false, false, false, false, false, false };
 
 	SDL_GetMouseState(&inputState.mouseX, &inputState.mouseY);
 
@@ -36,6 +36,9 @@ void Input::handleEvents(){
 				break;
 			case SDLK_RIGHT:
 				inputState.right = true;
+				break;
+			case SDLK_ESCAPE:
+				inputState.esc = true;
 				break;
 			default:
 				break;
