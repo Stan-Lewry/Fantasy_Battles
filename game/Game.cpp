@@ -45,23 +45,23 @@ void Game::initCharacters(){
 	//initialise active team (blue team) from the list of blue spawners
 	x = blueSpawners[0].x;
 	y = blueSpawners[0].y;
-	activeCharacterList[0] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[0] = new Character(x, y, 0, x * tileSize, y * tileSize, 0, KNIGHT, "Blue Knight");
 
 	x = blueSpawners[1].x;
 	y = blueSpawners[1].y;
-	activeCharacterList[1] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[1] = new Character(x, y, 0, x * tileSize, y * tileSize, 8, ARCHER, "Blue Archer");
 
 	x = blueSpawners[2].x;
 	y = blueSpawners[2].y;
-	activeCharacterList[2] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter");
+	activeCharacterList[2] = new Character(x, y, 0, x * tileSize, y * tileSize, 6, SPEARMAN, "Blue Spearman");
 
 	x = blueSpawners[3].x;
 	y = blueSpawners[3].y;
-	activeCharacterList[3] = new Character(x, y, 0, x * tileSize, y * tileSize, 6, SPEARMAN, "Blue Spearman");
+	activeCharacterList[3] = new Character(x, y, 0, x * tileSize, y * tileSize, 2, WIZARD, "Blue Wizard");
 
 	x = blueSpawners[4].x;
 	y = blueSpawners[4].y;
-	activeCharacterList[4] = new Character(x, y, 0, x * tileSize, y * tileSize, 8, ARCHER, "Blue Archer" );
+	activeCharacterList[4] = new Character(x, y, 0, x * tileSize, y * tileSize, 4, FIGHTER, "Blue Fighter" );
 
 	
 	//now initialise the inactive (red) team from the list of red spawners
